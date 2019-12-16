@@ -1,0 +1,526 @@
+{
+    "class" : "BayesianNetwork",
+    "name" : "DIY_GRN",
+    "structure" : [
+        [],
+        [],
+        [],
+        [],
+        [],
+        [
+            0
+        ],
+        [
+            0,
+            1
+        ],
+        [
+            0,
+            6,
+            5
+        ]
+    ],
+    "states" : [
+        {
+            "class" : "State",
+            "distribution" : {
+                "class" : "Distribution",
+                "dtype" : "int",
+                "name" : "DiscreteDistribution",
+                "parameters" : [
+                    {
+                        "0" : 0.33200067199731204,
+                        "1" : 0.6679993280026879
+                    }
+                ],
+                "frozen" : false
+            },
+            "name" : "G0",
+            "weight" : 1.0
+        },
+        {
+            "class" : "State",
+            "distribution" : {
+                "class" : "Distribution",
+                "dtype" : "int",
+                "name" : "DiscreteDistribution",
+                "parameters" : [
+                    {
+                        "0" : 0.5299998800004799,
+                        "1" : 0.47000011999952
+                    }
+                ],
+                "frozen" : false
+            },
+            "name" : "G3",
+            "weight" : 1.0
+        },
+        {
+            "class" : "State",
+            "distribution" : {
+                "class" : "Distribution",
+                "dtype" : "int",
+                "name" : "DiscreteDistribution",
+                "parameters" : [
+                    {
+                        "0" : 0.422000311998752,
+                        "1" : 0.5779996880012479
+                    }
+                ],
+                "frozen" : false
+            },
+            "name" : "G5",
+            "weight" : 1.0
+        },
+        {
+            "class" : "State",
+            "distribution" : {
+                "class" : "Distribution",
+                "dtype" : "int",
+                "name" : "DiscreteDistribution",
+                "parameters" : [
+                    {
+                        "0" : 0.5559997760008959,
+                        "1" : 0.444000223999104
+                    }
+                ],
+                "frozen" : false
+            },
+            "name" : "G6",
+            "weight" : 1.0
+        },
+        {
+            "class" : "State",
+            "distribution" : {
+                "class" : "Distribution",
+                "dtype" : "int",
+                "name" : "DiscreteDistribution",
+                "parameters" : [
+                    {
+                        "0" : 0.14200143199427204,
+                        "1" : 0.8579985680057279
+                    }
+                ],
+                "frozen" : false
+            },
+            "name" : "G7",
+            "weight" : 1.0
+        },
+        {
+            "class" : "State",
+            "distribution" : {
+                "class" : "Distribution",
+                "name" : "ConditionalProbabilityTable",
+                "table" : [
+                    [
+                        "0",
+                        "0",
+                        "0.19879880965289573"
+                    ],
+                    [
+                        "0",
+                        "1",
+                        "0.8012011903471042"
+                    ],
+                    [
+                        "1",
+                        "0",
+                        "0.6706576607325705"
+                    ],
+                    [
+                        "1",
+                        "1",
+                        "0.32934233926742956"
+                    ]
+                ],
+                "dtypes" : [
+                    "int",
+                    "int",
+                    "float"
+                ],
+                "parents" : [
+                    {
+                        "class" : "Distribution",
+                        "dtype" : "int",
+                        "name" : "DiscreteDistribution",
+                        "parameters" : [
+                            {
+                                "0" : 0.33200067199731204,
+                                "1" : 0.6679993280026879
+                            }
+                        ],
+                        "frozen" : false
+                    }
+                ]
+            },
+            "name" : "G4",
+            "weight" : 1.0
+        },
+        {
+            "class" : "State",
+            "distribution" : {
+                "class" : "Distribution",
+                "name" : "ConditionalProbabilityTable",
+                "table" : [
+                    [
+                        "0",
+                        "0",
+                        "0",
+                        "0.7655135791230465"
+                    ],
+                    [
+                        "0",
+                        "0",
+                        "1",
+                        "0.23448642087695337"
+                    ],
+                    [
+                        "0",
+                        "1",
+                        "0",
+                        "0.8094943338729645"
+                    ],
+                    [
+                        "0",
+                        "1",
+                        "1",
+                        "0.1905056661270355"
+                    ],
+                    [
+                        "1",
+                        "0",
+                        "0",
+                        "0.6083315278078699"
+                    ],
+                    [
+                        "1",
+                        "0",
+                        "1",
+                        "0.39166847219213013"
+                    ],
+                    [
+                        "1",
+                        "1",
+                        "0",
+                        "0.7289698227119372"
+                    ],
+                    [
+                        "1",
+                        "1",
+                        "1",
+                        "0.2710301772880627"
+                    ]
+                ],
+                "dtypes" : [
+                    "int",
+                    "int",
+                    "int",
+                    "float"
+                ],
+                "parents" : [
+                    {
+                        "class" : "Distribution",
+                        "dtype" : "int",
+                        "name" : "DiscreteDistribution",
+                        "parameters" : [
+                            {
+                                "0" : 0.33200067199731204,
+                                "1" : 0.6679993280026879
+                            }
+                        ],
+                        "frozen" : false
+                    },
+                    {
+                        "class" : "Distribution",
+                        "dtype" : "int",
+                        "name" : "DiscreteDistribution",
+                        "parameters" : [
+                            {
+                                "0" : 0.5299998800004799,
+                                "1" : 0.47000011999952
+                            }
+                        ],
+                        "frozen" : false
+                    }
+                ]
+            },
+            "name" : "G1",
+            "weight" : 1.0
+        },
+        {
+            "class" : "State",
+            "distribution" : {
+                "class" : "Distribution",
+                "name" : "ConditionalProbabilityTable",
+                "table" : [
+                    [
+                        "0",
+                        "0",
+                        "0",
+                        "0",
+                        "0.6249895842013166"
+                    ],
+                    [
+                        "0",
+                        "0",
+                        "0",
+                        "1",
+                        "0.37501041579868344"
+                    ],
+                    [
+                        "0",
+                        "0",
+                        "1",
+                        "0",
+                        "0.6346127959077711"
+                    ],
+                    [
+                        "0",
+                        "0",
+                        "1",
+                        "1",
+                        "0.36538720409222897"
+                    ],
+                    [
+                        "0",
+                        "1",
+                        "0",
+                        "0",
+                        "0.7986974195140323"
+                    ],
+                    [
+                        "0",
+                        "1",
+                        "0",
+                        "1",
+                        "0.2013025804859677"
+                    ],
+                    [
+                        "0",
+                        "1",
+                        "1",
+                        "0",
+                        "0.2800058665102264"
+                    ],
+                    [
+                        "0",
+                        "1",
+                        "1",
+                        "1",
+                        "0.7199941334897736"
+                    ],
+                    [
+                        "1",
+                        "0",
+                        "0",
+                        "0",
+                        "0.6666296378582537"
+                    ],
+                    [
+                        "1",
+                        "0",
+                        "0",
+                        "1",
+                        "0.33337036214174626"
+                    ],
+                    [
+                        "1",
+                        "0",
+                        "1",
+                        "0",
+                        "0.758602854975519"
+                    ],
+                    [
+                        "1",
+                        "0",
+                        "1",
+                        "1",
+                        "0.2413971450244811"
+                    ],
+                    [
+                        "1",
+                        "1",
+                        "0",
+                        "0",
+                        "0.6999942858775464"
+                    ],
+                    [
+                        "1",
+                        "1",
+                        "0",
+                        "1",
+                        "0.30000571412245364"
+                    ],
+                    [
+                        "1",
+                        "1",
+                        "1",
+                        "0",
+                        "0.5142848980058282"
+                    ],
+                    [
+                        "1",
+                        "1",
+                        "1",
+                        "1",
+                        "0.4857151019941718"
+                    ]
+                ],
+                "dtypes" : [
+                    "int",
+                    "int",
+                    "int",
+                    "int",
+                    "float"
+                ],
+                "parents" : [
+                    {
+                        "class" : "Distribution",
+                        "dtype" : "int",
+                        "name" : "DiscreteDistribution",
+                        "parameters" : [
+                            {
+                                "0" : 0.33200067199731204,
+                                "1" : 0.6679993280026879
+                            }
+                        ],
+                        "frozen" : false
+                    },
+                    {
+                        "class" : "Distribution",
+                        "name" : "ConditionalProbabilityTable",
+                        "table" : [
+                            [
+                                "0",
+                                "0",
+                                "0",
+                                "0.7655135791230465"
+                            ],
+                            [
+                                "0",
+                                "0",
+                                "1",
+                                "0.23448642087695337"
+                            ],
+                            [
+                                "0",
+                                "1",
+                                "0",
+                                "0.8094943338729645"
+                            ],
+                            [
+                                "0",
+                                "1",
+                                "1",
+                                "0.1905056661270355"
+                            ],
+                            [
+                                "1",
+                                "0",
+                                "0",
+                                "0.6083315278078699"
+                            ],
+                            [
+                                "1",
+                                "0",
+                                "1",
+                                "0.39166847219213013"
+                            ],
+                            [
+                                "1",
+                                "1",
+                                "0",
+                                "0.7289698227119372"
+                            ],
+                            [
+                                "1",
+                                "1",
+                                "1",
+                                "0.2710301772880627"
+                            ]
+                        ],
+                        "dtypes" : [
+                            "int",
+                            "int",
+                            "int",
+                            "float"
+                        ],
+                        "parents" : [
+                            {
+                                "class" : "Distribution",
+                                "dtype" : "int",
+                                "name" : "DiscreteDistribution",
+                                "parameters" : [
+                                    {
+                                        "0" : 0.33200067199731204,
+                                        "1" : 0.6679993280026879
+                                    }
+                                ],
+                                "frozen" : false
+                            },
+                            {
+                                "class" : "Distribution",
+                                "dtype" : "int",
+                                "name" : "DiscreteDistribution",
+                                "parameters" : [
+                                    {
+                                        "0" : 0.5299998800004799,
+                                        "1" : 0.47000011999952
+                                    }
+                                ],
+                                "frozen" : false
+                            }
+                        ]
+                    },
+                    {
+                        "class" : "Distribution",
+                        "name" : "ConditionalProbabilityTable",
+                        "table" : [
+                            [
+                                "0",
+                                "0",
+                                "0.19879880965289573"
+                            ],
+                            [
+                                "0",
+                                "1",
+                                "0.8012011903471042"
+                            ],
+                            [
+                                "1",
+                                "0",
+                                "0.6706576607325705"
+                            ],
+                            [
+                                "1",
+                                "1",
+                                "0.32934233926742956"
+                            ]
+                        ],
+                        "dtypes" : [
+                            "int",
+                            "int",
+                            "float"
+                        ],
+                        "parents" : [
+                            {
+                                "class" : "Distribution",
+                                "dtype" : "int",
+                                "name" : "DiscreteDistribution",
+                                "parameters" : [
+                                    {
+                                        "0" : 0.33200067199731204,
+                                        "1" : 0.6679993280026879
+                                    }
+                                ],
+                                "frozen" : false
+                            }
+                        ]
+                    }
+                ]
+            },
+            "name" : "G2",
+            "weight" : 1.0
+        }
+    ]
+}

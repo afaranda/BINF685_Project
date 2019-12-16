@@ -1,0 +1,585 @@
+is_child
+is_child
+Cant have a child that is also a parent
+is_child
+is_child
+is_child
+is_child
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+is_child
+is_child
+is_child
+Already has this parent
+Already has this parent
+is_child
+Already has this parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+is_child
+Already has this parent
+is_child
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+is_child
+is_child
+Already has this parent
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+is_child
+is_child
+Already has this parent
+is_child
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+is_child
+Already has this parent
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+is_child
+is_child
+is_child
+is_child
+is_child
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+is_child
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+is_child
+is_child
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+is_child
+Already has this parent
+Already has this parent
+Already has this parent
+is_child
+Already has this parent
+Already has this parent
+Already has this parent
+is_child
+Already has this parent
+is_child
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Already has this parent
+is_child
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+Already has this parent
+is_child
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+is_child
+Already has this parent
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Most Recent Best Network for Trial 2
+Node: 0 Parents: [1, 2, 3, 4, 5, 6, 7] Children: []
+Node: 1 Parents: [3] Children: [0, 6, 7, 4]
+Node: 2 Parents: [6] Children: [0, 3, 4, 5, 7]
+Node: 3 Parents: [2, 5] Children: [1, 0, 7]
+Node: 4 Parents: [2, 1] Children: [0, 5, 7]
+Node: 5 Parents: [2, 4] Children: [0, 3, 7]
+Node: 6 Parents: [1] Children: [0, 2, 7]
+Node: 7 Parents: [1, 2, 3, 4, 5, 6] Children: [0]
+Best Score observed in Trial 2: -674.8607280105574
+
+Cant have a child that is also a parent
+is_child
+is_child
+is_child
+Already has this parent
+Already has this parent
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Most Recent Best Network for Trial 3
+Node: 0 Parents: [] Children: [1, 3, 5]
+Node: 1 Parents: [0, 4, 7, 6] Children: []
+Node: 2 Parents: [3] Children: [5]
+Node: 3 Parents: [0] Children: [2, 7]
+Node: 4 Parents: [5, 7] Children: [1]
+Node: 5 Parents: [0, 2, 7] Children: [4]
+Node: 6 Parents: [] Children: [1]
+Node: 7 Parents: [3] Children: [1, 4, 5]
+Best Score observed in Trial 3: -712.0882709307814
+
+Already has this parent
+is_child
+is_child
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+Already has this parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+Already has this parent
+is_child
+Already has this parent
+is_child
+Already has this parent
+is_child
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+is_child
+Already has this parent
+Already has this parent
+is_child
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Already has this parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+is_child
+is_child
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+is_child
+is_child
+Cant have a child that is also a parent
+Already has this parent
+is_child
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+is_child
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+is_child
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Already has this parent
+is_child
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+is_child
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+is_child
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+is_child
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Most Recent Best Network for Trial 4
+Node: 0 Parents: [3, 4, 6] Children: [1, 2, 5]
+Node: 1 Parents: [0, 2, 3, 4, 5, 6, 7] Children: []
+Node: 2 Parents: [0, 4, 5, 6, 7] Children: [1]
+Node: 3 Parents: [] Children: [0, 1, 7]
+Node: 4 Parents: [] Children: [0, 1, 2, 7]
+Node: 5 Parents: [0, 7, 6] Children: [1, 2]
+Node: 6 Parents: [] Children: [0, 1, 2, 5]
+Node: 7 Parents: [3, 4] Children: [1, 2, 5]
+Best Score observed in Trial 4: -689.2933245536951
+
+is_child
+Already has this parent
+Cant have a child that is also a parent
+is_child
+is_child
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Cant have a child that is also a parent
+Already has this parent
+is_child
+is_child
+Cant have a child that is also a parent
+Already has this parent
+Cant have a child that is also a parent
+Already has this parent
+is_child
+Already has this parent
+Already has this parent
+Already has this parent
+is_child
+is_child
+is_child
+Already has this parent
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+Already has this parent
+Already has this parent
+is_child
+Already has this parent
+Cant have a child that is also a parent
+Cant have a child that is also a parent
+is_child
+Already has this parent
+Cant have a child that is also a parent
+Most Recent Best Network for Trial 5
+Node: 0 Parents: [3] Children: [1]
+Node: 1 Parents: [0, 3, 6, 7, 5] Children: [4]
+Node: 2 Parents: [3] Children: [4, 6]
+Node: 3 Parents: [] Children: [0, 1, 2, 7]
+Node: 4 Parents: [1, 2, 5, 7] Children: []
+Node: 5 Parents: [] Children: [4, 1]
+Node: 6 Parents: [2] Children: [1]
+Node: 7 Parents: [3] Children: [1, 4]
+Best Score observed in Trial 5: -703.8984015872743
+
+
+Percentage of Predictions by Trial
+       Percent
+Trial         
+1         46.0
+2         28.0
+3         28.0
+4         28.0
+5         46.0
