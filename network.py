@@ -21,6 +21,39 @@ import pomegranate as pm
 #         if j % len(l) < len(l) - 1 
 #         else l[j] for j in range(0, len(l))
 #     ]
+def dfs(node, vis):
+    
+    vis[node] = "G"
+    
+    for p in node.par:
+        
+        if vis[p] == "B":
+            continue
+        
+        if vis[p] == "G":
+            #print("Cycle Detected", p.idx)
+            return True
+        
+        if dfs(p, vis):
+            #print("From", node.idx, "Cycle Detected Recursively", p.idx)
+            return(True)
+  
+    vis[node]="B"
+    return(False)
+
+def val(net):
+    vis = {i:'W' for i in net.values()}
+    
+    for node in vis.keys():
+        if vis[node] == "W":
+            if dfs(node, vis):
+                return True
+        else:
+            continue
+    return False
+
+def topo_sort(net):
+    pass
 
 
 class node:
@@ -129,7 +162,11 @@ class node:
             if self in p.par:
                 print("Cant have a parent that is also a child")
                 return(False)
-
+            
+            elif self == p:
+                print("No Self Parenting Allowed")
+                return False
+            
             elif p in self.par:
                 print("Already has this parent")
                 return(False)
@@ -205,350 +242,313 @@ class node:
 
         
 
-# class net:
-#     def __init__(self, size=5, outcomes = (0,1)):
-#         self.siz = size
-#         self.nds = {}
-#         for i in range(0, self.siz):
-#             self.nds[i] = node(i, outcomes=outcomes)
-
-
-#     def reset(self):
-#         self.siz = self.siz
-#         self.nds = {}
-#         for i in range(0, self.siz):
-#             self.nds[i] = node(i)
+class net:
+    def __init__(self, size=None, outcomes=None, data=None):
+        self.siz = None
+        self.nds = {}
         
-#     def add_edge(self, p_idx, c_idx):
-#         if p_idx != c_idx:
-#             if self.nds[p_idx].add_children([self.nds[c_idx]]):
-#                 self.nds[c_idx].add_parents([self.nds[p_idx]])
+        if not (size == None and outcomes == None) and data == None:
+            self.fill_uniform(size, outcomes)
+            
+        elif isinstance(data, pd.DataFrame):
+            self.fill_data(data)
+    
+    def fill_uniform(self, size=5, outcomes=(0,1)):
+        self.siz = size
+        self.nds = {}
+        for i in range(0, self.siz):
+            self.nds[i] = node(i, outcomes = self.ocm)
+        return self
+    
+    def fill_data(self, data):
+        self.siz = data.shape[1]
+        for i in range(0, self.siz):
+            self.nds[i] = node(
+                i, label = data.columns[i], 
+                outcomes = data[data.columns[i]].unique().tolist()
+            )
         
     
-#     def del_edge(self, p_idx, c_idx):
-#         self.nds[p_idx].del_children([self.nds[c_idx]])
-#         self.nds[c_idx].del_parents([self.nds[p_idx]])
+    def add_edge(self, p_idx, c_idx):
+        if p_idx != c_idx:
+            self.nds[c_idx].add_parents([self.nds[p_idx]])
         
-    
-#     def rev_edge(self, p_idx, c_idx):
-#         if p_idx != c_idx:
-#             if c_idx in [j.idx for j in self.nds[p_idx].chl]:
-#                 print("is_child")
-#                 self.del_edge(p_idx, c_idx)
-#                 self.add_edge(c_idx, p_idx)
-
-#     def val(self):
-#         """
-#         Depth first search algorithm to validate that
-#         a given DAG contains no cycles
-#         """
-#         # Initialize Depth Markers
-#         rec, vis = {}, {}
-#         vertices = list(self.nds.values())
-#         for v in vertices:
-#             rec[v] = False
-#             vis[v] = False
-
-#         for v in vertices:
-#             if not self.dfs(v, rec, vis):
-#                 return(True)
-#             else:
-#                 return(False)
-      
-#     def dfs(self, v, rec, vis):
-#         if not vis[v]:
-#             vis[v] = True
-#             rec[v] = True
+    def del_edge(self, p_idx, c_idx):
+        self.nds[c_idx].del_parents([self.nds[p_idx]])
         
-#         for c in v.chl:
-#             if (not vis[c]) and self.dfs(c, rec, vis):
-#                 return(True)
-#             elif rec[c]:
-#                 return(True)
-#         else:
-#             rec[v] = False
-#             return(False)
+    def rev_edge(self, p_idx, c_idx):
+        if p_idx != c_idx:
+            if p_idx in [j.idx for j in self.nds[c_idx].par]:
+                print("is_child")
+                self.del_edge(p_idx, c_idx)
+                self.add_edge(c_idx, p_idx)
+
+    def acyclic(self):
+        return not val(self.nds)
+          
+    def calc_cpt(self, data, alpha=0.001, by='index'):
+        """
+        Calculate CPT probabilities for all nodes in the
+        network given the data. If dolumn names in the data do not match
+        the index, invoke with: " by='label' " to 
+        """
+        for k in self.nds.keys():
+            n = self.nds[k]
+            n.node_probs(data = data, alpha = alpha, by=by)
+
+    def is_dpord(self, l):
+        """
+        Function to check a node list is ordered parent to child
+        """
+        for i in range(0, len(l) -1):
+            pi = l[i].par
+            for j in pi:
+                for k in range(i+1, len(l)):
+                    if j == l[k]:
+                        return False
+                    else:
+                        continue
+        return True
+
+    def sort_nodes(self, l):
+        stop = 0
+        l = l #list(self.nds.values())
+        p = 0
+        while (not self.is_dpord(l)) and stop <1000:
+            pi = l[p].par
+            for i in range(p, len(l)):
+                if l[i] in pi:
+                    l.insert(len(l), l.pop(p))
+                    break
+                elif i+1 == len(l):
+                    p = p + 1
+
+            stop = stop + 1
+        return(l)
         
-#     def calc_cpt(self, data, alpha=0.001):
-#         """
-#         Calculate CPT probabilities for all nodes in the
-#         network given the data.
-#         """
-#         for k in self.nds.keys():
-#             n = self.nds[k]
-#             n.node_probs(data = data, alpha = alpha)
-
-#     def is_dpord(self, l):
-#         """
-#         Function to check a node list is ordered parent to child
-#         """
-#         for i in range(0, len(l) -1):
-#             pi = l[i].par
-#             for j in pi:
-#                 for k in range(i+1, len(l)):
-#                     if j == l[k]:
-#                         return False
-#                     else:
-#                         continue
-#         return True
-
-#     def sort_nodes(self, l):
-#         stop = 0
-#         l = l #list(self.nds.values())
-#         p = 0
-#         while (not self.is_dpord(l)) and stop <1000:
-#             pi = l[p].par
-#             for i in range(p, len(l)):
-#                 if l[i] in pi:
-#                     l.insert(len(l), l.pop(p))
-#                     break
-#                 elif i+1 == len(l):
-#                     p = p + 1
-
-#             stop = stop + 1
-#         return(l)
-    
-#     def new_sort_nodes(self, l):
-#         stop = 0
-#         l = l #list(self.nds.values())
-#         p = 0
-#         while (not self.is_dpord(l)) and stop <1000:
-#             pi = l[p].par
-#             for i in range(p, len(l)):
-#                 if l[i] in pi:
-#                     l.insert(len(l), l.pop(p))
-#                     break
-#                 elif i+1 == len(l):
-#                     p = p + 1
-
-#             stop = stop + 1
-#         return(l)
-    
-#     def calc_prob(self, query):
-#         l = list(self.nds.values())
-#         if(len(query) != self.siz):
-#             print('Invalid Query')
-#             return False
-#         prob = []
-#         # Assume that the variables in the query correspond
-#         # to their position eg query[0] is Var 0, query[1] = Var 1 etc. . .
+    def calc_prob(self, query):
+        l = list(self.nds.values())
+        if(len(query) != self.siz):
+            print('Invalid Query')
+            return False
+        prob = []
+        # Assume that the variables in the query correspond
+        # to their position eg query[0] is Var 0, query[1] = Var 1 etc. . .
         
-#         for i in l:
-#             var = i.cpt.columns.drop('Prob')
-#             val = [query[j] for j in var ]
-#             c = i.cpt.copy()
-#             for j in range(0, len(val)):
-#                 c = c[c[var[j]] == val[j]]
-#             prob.append(c['Prob'].values[0])
-#         return(np.prod(prob))
+        for i in l:
+            var = i.cpt.columns.drop('Prob')
+            val = [query[j] for j in var ]
+            c = i.cpt.copy()
+            for j in range(0, len(val)):
+                c = c[c[var[j]] == val[j]]
+            prob.append(c['Prob'].values[0])
+        return(np.prod(prob))
 
-#     def sample_net(self, n):
-#         """
-#         Using a simple 'prior sampling' approach, generate 
-#         n samples from this 'net' object.
-#         """
-#         df = []
-#         x = 0
-#         while x < n:
-#             l = self.sort_nodes(list(self.nds.values()))
-#             row = {}
-#             for i in l:
-#                 var = i.cpt.columns.drop('Prob')
-#                 prior = {k:row[k] for k in row.keys() if k in var}
-#                 c = i.cpt.copy()
-#                 c = c.sort_values(by=list(c.columns))
+    def sample_net(self, n):
+        """
+        Using a simple 'prior sampling' approach, generate 
+        n samples from this 'net' object.
+        """
+        df = []
+        x = 0
+        while x < n:
+            l = self.sort_nodes(list(self.nds.values()))
+            row = {}
+            for i in l:
+                var = i.cpt.columns.drop('Prob')
+                prior = {k:row[k] for k in row.keys() if k in var}
+                c = i.cpt.copy()
+                c = c.sort_values(by=list(c.columns))
 
-#                 # Subset cpt
-#                 #print(prior)
-#                 for j in prior.keys():
-#                         c = c[c[j] == prior[j]]
+                # Subset cpt
+                #print(prior)
+                for j in prior.keys():
+                        c = c[c[j] == prior[j]]
 
-#                 s = np.random.uniform()
-#                 #print("NODE:", i.idx, "Draw:", s)
-#                 #print(c)
-#                 #print(c.loc[c[i.idx] == 0, 'Prob'])
+                s = np.random.uniform()
+                #print("NODE:", i.idx, "Draw:", s)
+                #print(c)
+                #print(c.loc[c[i.idx] == 0, 'Prob'])
                 
-#                 if s < c.loc[c[i.idx] == 0, 'Prob'].values[0]:
-#                     row[i.idx] = 0
-#                 else:
-#                     row[i.idx] = 1
-#                 #print(row.keys(), row.values())
-#             df.append([row[m] for m in sorted(row.keys())])
-#             x = x + 1
-#         df = pd.DataFrame(df)
-#         return(df)
+                if s < c.loc[c[i.idx] == 0, 'Prob'].values[0]:
+                    row[i.idx] = 0
+                else:
+                    row[i.idx] = 1
+                #print(row.keys(), row.values())
+            df.append([row[m] for m in sorted(row.keys())])
+            x = x + 1
+        df = pd.DataFrame(df)
+        return(df)
     
-#     def gibbs(self, n):
-#         # Randomly initialize values for all possible variables
-#         val = []
-#         samples={}
-#         for k in self.nds.keys():
-#             nd=self.nds[k]
-#             val.append(np.random.choice(nd.ocm))
-#             samples[k]=[]
+    def gibbs(self, n):
+        # Randomly initialize values for all possible variables
+        val = []
+        samples={}
+        for k in self.nds.keys():
+            nd=self.nds[k]
+            val.append(np.random.choice(nd.ocm))
+            samples[k]=[]
             
-#         l = self.sort_nodes(list(self.nds.values()))
-#         #print(val)
-#         # Generate "n" samples by rotating through each variable
-#         while n > 0:          
-#             pos = n % len(self.nds)
-#             node= l[pos]        
-#             par = self.nds[pos].parent_idx()
-#             ocm = self.nds[pos].ocm
-#             cpt = self.nds[pos].cpt.copy()
-#             if len(par) > 0:
-#                 idx = pd.MultiIndex.from_tuples(
-#                     [tuple([val[j] for j in par] + [o]) for o in ocm],
-#                     names = par + [pos]
-#                 )
-#             else:
-#                 idx = pd.Index(ocm).set_names(pos)
+        l = self.sort_nodes(list(self.nds.values()))
+        #print(val)
+        # Generate "n" samples by rotating through each variable
+        while n > 0:          
+            pos = n % len(self.nds)
+            node= l[pos]        
+            par = self.nds[pos].parent_idx()
+            ocm = self.nds[pos].ocm
+            cpt = self.nds[pos].cpt.copy()
+            if len(par) > 0:
+                idx = pd.MultiIndex.from_tuples(
+                    [tuple([val[j] for j in par] + [o]) for o in ocm],
+                    names = par + [pos]
+                )
+            else:
+                idx = pd.Index(ocm).set_names(pos)
 
-#             oc = cpt.set_index(par + [pos]).loc[idx].reset_index()[pos].values
-#             pr = cpt.set_index(par + [pos]).loc[idx].reset_index()['Prob'].values
-#             new_value = np.random.choice(oc, p=pr)
-#             val[pos] = new_value
-#             for k in samples.keys():
-#                 samples[k].append(val[k])
-#             n = n - 1
+            oc = cpt.set_index(par + [pos]).loc[idx].reset_index()[pos].values
+            pr = cpt.set_index(par + [pos]).loc[idx].reset_index()['Prob'].values
+            new_value = np.random.choice(oc, p=pr)
+            val[pos] = new_value
+            for k in samples.keys():
+                samples[k].append(val[k])
+            n = n - 1
             
-#         return(pd.DataFrame(samples))
+        return(pd.DataFrame(samples))
         
-       
-#     def score_net(self, data):
-#         """
-#         Score this network against a data set
-#         """
-#         # Flatten data set to a table of unique rows with corresponding
-#         # Frequencies. 
+    def score_net(self, data):
+        """
+        Score this network against a data set
+        """
+        # Flatten data set to a table of unique rows with corresponding
+        # Frequencies. 
 
-#         #df = data.copy()
-#         #gr = [i for i in df.columns]
-#         #df['Count'] = 0
-#         #df = df.groupby(gr, as_index=False).count()
-#         #df['Model'] = df[gr].apply(self.calc_prob, axis=1)
-#         #return(df.Model.transform(log).sum())
+        #df = data.copy()
+        #gr = [i for i in df.columns]
+        #df['Count'] = 0
+        #df = df.groupby(gr, as_index=False).count()
+        #df['Model'] = df[gr].apply(self.calc_prob, axis=1)
+        #return(df.Model.transform(log).sum())
         
-#         # Reformat data for pomegranate scoring
-#         data.columns = ["G" + str(i) for i in data.columns]
-#         net = self.export_pom()[2]
-#         pscore = net.log_probability(data).sum()
-#         return pscore
+        # Reformat data for pomegranate scoring
+        data.columns = ["G" + str(i) for i in data.columns]
+        net = self.export_pom()[2]
+        pscore = net.log_probability(data).sum()
+        return pscore
         
+    def export_dag(self):
+        dag = np.zeros([self.siz, self.siz], int)
+        for k in self.nds.keys():
+            for p in self.nds[k].par:
+                dag[p.idx, self.nds[k].idx] = 1
+        return(dag)
     
-#     def export_dag(self):
-#         dag = np.zeros([self.siz, self.siz], int)
-#         for k in self.nds.keys():
-#             for c in self.nds[k].chl:
-#                 dag[self.nds[k].idx, c.idx] = 1
-#         return(dag)
-    
-#     def import_dag(self, dag):
-#         dg = dag
-#         self.reset()
-#         if not isinstance(dg, np.ndarray):
-#             return None
-#         if not dg.shape[0] == dg.shape[1]:
-#             return None
+    def import_dag(self, dag):
+        dg = dag
+        self.reset()
+        if not isinstance(dg, np.ndarray):
+            return None
+        if not dg.shape[0] == dg.shape[1]:
+            return None
         
-#         for i in range(0, len(dg)):
-#             for j in range(0, len(dg)):
-#                 if dg[i, j] == 1:
-#                     self.add_edge(i, j)
+        for i in range(0, len(dg)):
+            for j in range(0, len(dg)):
+                if dg[i, j] == 1:
+                    self.add_edge(i, j)
 
-#     def export_pom(self):
-#         '''
-#         Returns
-#         -------
-#         pomegranate BN Model based on given DAG.
-#         Assume my "sort" function correctly returns a list where
-#         children are allways ranked higher than parents
-#         '''
-#         s = self.sort_nodes( l = list(self.nds.values()))
-#         model = pm.BayesianNetwork("DIY_GRN")
+    def export_pom(self):
+        '''
+        Returns
+        -------
+        pomegranate BN Model based on given DAG.
+        Assume my "sort" function correctly returns a list where
+        children are allways ranked higher than parents
+        '''
+        s = self.sort_nodes( l = list(self.nds.values()))
+        model = pm.BayesianNetwork("DIY_GRN")
         
         
-#         # Convert Top Level nodes to Discrete distributions
-#         top = [i for i in s if len(i.par) == 0]
-#         topStates = {}
+        # Convert Top Level nodes to Discrete distributions
+        top = [i for i in s if len(i.par) == 0]
+        topStates = {}
         
-#         for n in top:
-#             pr = n.cpt['Prob'].to_dict()
-#             va = n.cpt[n.idx].to_dict()
-#             dist = {}
-#             for v in va.keys():
-#                 dist[va[v]] = pr[v]
+        for n in top:
+            pr = n.cpt['Prob'].to_dict()
+            va = n.cpt[n.idx].to_dict()
+            dist = {}
+            for v in va.keys():
+                dist[va[v]] = pr[v]
             
-#             dist=pm.DiscreteDistribution(dist)
-#             state = pm.Node(dist, name = "G"+str(n.idx))
+            dist=pm.DiscreteDistribution(dist)
+            state = pm.Node(dist, name = "G"+str(n.idx))
                 
             
-#             topStates["G"+str(n.idx)] = state
-#             model.add_state(state)
+            topStates["G"+str(n.idx)] = state
+            model.add_state(state)
 
-#         # Convert Depent Nodes to Conditional Distributions
-#         dep = [i for i in s if len(i.par) != 0]
-#         depStates = {}
+        # Convert Depent Nodes to Conditional Distributions
+        dep = [i for i in s if len(i.par) != 0]
+        depStates = {}
         
-#         for n in dep:
+        for n in dep:
             
-#             # Convert floats cpt outcome levels to integers if needed
-#             if isinstance(n.cpt.iloc[0,0], np.int64):
-#                 cpt = [fl(l) for l in n.cpt.values.tolist()]
+            # Convert floats cpt outcome levels to integers if needed
+            if isinstance(n.cpt.iloc[0,0], np.int64):
+                cpt = [fl(l) for l in n.cpt.values.tolist()]
             
-#             else:
-#                 cpt = n.cpt.values.tolist()
+            else:
+                cpt = n.cpt.values.tolist()
                 
-#             # Vector of ID for each parent
-#             par_id = ["G"+str(i.idx) for i in n.par ]
+            # Vector of ID for each parent
+            par_id = ["G"+str(i.idx) for i in n.par ]
 
             
-#             # Validate that all parents have been processed
-#             for p  in par_id:
-#                 if (not p in topStates.keys()) and (not p in depStates.keys()):
-#                     print("Problem with parent:",p, "of node:",n.idx)
-#                     return [topStates, depStates]
+            # Validate that all parents have been processed
+            for p  in par_id:
+                if (not p in topStates.keys()) and (not p in depStates.keys()):
+                    print("Problem with parent:",p, "of node:",n.idx)
+                    return [topStates, depStates]
             
-#             # Get all parents found in the topStates dict
-#             par = [ 
-#                     topStates[i]
-#                     for i in par_id if i in topStates.keys()
-#             ]
+            # Get all parents found in the topStates dict
+            par = [ 
+                    topStates[i]
+                    for i in par_id if i in topStates.keys()
+            ]
             
             
-#             # Add all parents in the depStates dict
-#             par = par + [
-#                 depStates[i]
-#                 for i in par_id if i in depStates.keys()
-#             ]
+            # Add all parents in the depStates dict
+            par = par + [
+                depStates[i]
+                for i in par_id if i in depStates.keys()
+            ]
 
-#             cpt = pm.ConditionalProbabilityTable(
-#                 cpt,
-#                 [p.distribution for p in par] 
-#             )
+            cpt = pm.ConditionalProbabilityTable(
+                cpt,
+                [p.distribution for p in par] 
+            )
             
-#             state =  pm.Node(cpt, name = "G"+str(n.idx))
-#             depStates["G"+str(n.idx)] = state
+            state =  pm.Node(cpt, name = "G"+str(n.idx))
+            depStates["G"+str(n.idx)] = state
             
-#             # Add node to model
-#             model.add_state(state)
+            # Add node to model
+            model.add_state(state)
             
-#             # Add edges from parent to this node
-#             for p in par:
-#                 model.add_edge(p, state)
+            # Add edges from parent to this node
+            for p in par:
+                model.add_edge(p, state)
             
         
-#         # Assemble and "Bake" model
-#         model.bake()
-#         return (topStates, depStates, model)
+        # Assemble and "Bake" model
+        model.bake()
+        return (topStates, depStates, model)
                     
-#     def print_nodes(self):
-#         for k in self.nds.keys():
-#             print(
-#                 "Node:", k,
-#                 "Parents:", self.nds[k].parent_idx(),
-#                 "Children:",[j.idx for j in self.nds[k].chl]
-#             )
+    def print_nodes(self):
+        for k in self.nds.keys():
+            print(
+                "Node:", k,
+                "Parents:", self.nds[k].parent_idx(),
+                "Children:",[j.idx for j in self.nds[k].chl]
+            )
 
 
 # class greedy():
