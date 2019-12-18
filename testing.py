@@ -1,10 +1,141 @@
 import numpy as np
 import pandas as pd
-from network import greedy
-from network import net
+import random as rn
+#from network import greedy
+from network import node
 from matplotlib import pyplot as plt
 from pyitlib import discrete_random_variable as drv
 from pomegranate import *
+
+##### Validated On Binary Outcomes
+
+G1 = node(1, label="G1")
+G2 = node(2, label="G2")
+G3 = node(3, label="G3", parents=[G2, G1])
+
+
+data={
+      'G1':[rn.choices([0,1], weights=[0.5, 0.5])[0] for i in range(0,1000)],
+      'G2':[rn.choices([0,1], weights=[0.2, 0.8])[0] for i in range(0,1000)]  
+      }
+
+def pfun(a,b):
+    if a==1:
+        if b == 1:
+            return rn.choices([0,1], weights=[0.9,0.1])[0]
+        elif b == 0:
+            return rn.choices([0,1], weights=[0.1,0.9])[0]
+        
+    elif a==0:
+        if b == 1:
+            return rn.choices([0,1], weights=[0.1,0.9])[0]
+        elif b == 0:
+            return rn.choices([0,1], weights=[0.9,0.1])[0]
+    
+data['G3'] = [
+    pfun(data['G1'][i], data['G2'][i]) 
+    for i in range(0,len(data['G1']))
+    ]
+
+data = pd.DataFrame(data)
+G1.node_probs(data, alpha=0.00001, by='label')
+G2.node_probs(data, alpha=0.00001, by='label')
+G3.node_probs(data, alpha=0.00001, by='label')
+
+data={
+      1:[rn.choices([0,1], weights=[0.5, 0.5])[0] for i in range(0,1000)],
+      2:[rn.choices([0,1], weights=[0.2, 0.8])[0] for i in range(0,1000)]  
+      }
+
+def pfun(a,b):
+    if a==1:
+        if b == 1:
+            return rn.choices([0,1], weights=[0.9,0.1])[0]
+        elif b == 0:
+            return rn.choices([0,1], weights=[0.1,0.9])[0]
+        
+    elif a==0:
+        if b == 1:
+            return rn.choices([0,1], weights=[0.1,0.9])[0]
+        elif b == 0:
+            return rn.choices([0,1], weights=[0.9,0.1])[0]
+    
+data[3] = [
+    pfun(data[1][i], data[2][i]) 
+    for i in range(0,len(data[1]))
+    ]
+
+data = pd.DataFrame(data)
+G1.node_probs(data, alpha=0.00001)
+G2.node_probs(data, alpha=0.00001)
+G3.node_probs(data, alpha=0.00001)
+
+###### Validate node on Multinomial Outcomes
+G1 = node(1, label="G1")
+G2 = node(2, label="G2", outcomes=('A', 'B', 'C'))
+G3 = node(3, label="G3", parents=[G2, G1])
+
+
+data={
+      'G1':[rn.choices([0,1], weights=[0.5, 0.5])[0] for i in range(0,2000)],
+      'G2':[rn.choices(['A', 'B', 'C'], weights=[0.15, 0.3, 0.55])[0] for i in range(0,2000)]  
+      }
+
+def pfun(a,b):
+    if a==1:
+        if b == 'A':
+            return rn.choices([0,1], weights=[0.9,0.1])[0]
+        elif b == 'B':
+            return rn.choices([0,1], weights=[0.1,0.9])[0]
+        elif b =='C':
+            return rn.choices([0,1], weights=[0.9,0.1])[0]
+    
+    if a==0:
+        if b == 'A':
+            return rn.choices([0,1], weights=[0.1,0.9])[0]
+        elif b == 'B':
+            return rn.choices([0,1], weights=[0.1,0.9])[0]
+        elif b =='C':
+            return rn.choices([0,1], weights=[0.1,0.9])[0]
+def ofun(a):
+    if a==1:
+        return rn.choices([0,1], weights=[0.9,0.1])[0]
+    else:
+        return rn.choices([0,1], weights=[0.1,0.9])[0]
+    
+data['G3'] = [
+    pfun(data['G1'][i], data['G2'][i]) 
+    for i in range(0,len(data['G1']))
+    ]
+
+data['G3'] = [
+    ofun(data['G1'][i]) 
+    for i in range(0,len(data['G1']))
+    ]
+
+data = pd.DataFrame(data)
+data['G2'] = data['G2'].astype('str')
+G1.node_probs(data, alpha=0.00001, by='label')
+G2.node_probs(data, alpha=0.00001, by='label')
+G3.node_probs(data, alpha=0.00001, by='label')
+
+bn = BayesianNetwork.from_samples(data)
+
+
+
+def fn(x):
+    if x == 'A':
+        return 0
+    if x == 'B':
+        return 1
+    if x == 'C':
+        return 2
+    else:
+        return 3
+data['G2'] = data['G2'].apply(fn)
+
+
+
 
 # # Load Data Tables
 # train = pd.read_csv(
@@ -19,18 +150,18 @@ from pomegranate import *
 #     sep="\t"
 # )
 
-n=net(3)
-n.add_edge(0,1)
-n.add_edge(2,1)
+# n=net(3)
+# n.add_edge(0,1)
+# n.add_edge(2,1)
 
-n.nds[0].cpt=pd.DataFrame({0:[0,1], 'Prob':[0.5, 0.5]})
-n.nds[2].cpt=pd.DataFrame({0:[0,1], 'Prob':[0.6, 0.4]})
+# n.nds[0].cpt=pd.DataFrame({0:[0,1], 'Prob':[0.5, 0.5]})
+# n.nds[2].cpt=pd.DataFrame({0:[0,1], 'Prob':[0.6, 0.4]})
 
-n.nds[1].cpt=pd.DataFrame({
-    0:[0,0,0,0,1,1,1,1],
-    2:[0,0,1,1,0,0,1,1],
-    1:[0,1,0,1,0,1,0,1],
-    'Prob':[0.2, 0.8, 0.8, 0.2, 0.8, 0.2, 0.2, 0.8]})
+# n.nds[1].cpt=pd.DataFrame({
+#     0:[0,0,0,0,1,1,1,1],
+#     2:[0,0,1,1,0,0,1,1],
+#     1:[0,1,0,1,0,1,0,1],
+#     'Prob':[0.2, 0.8, 0.8, 0.2, 0.8, 0.2, 0.2, 0.8]})
 
 
 
