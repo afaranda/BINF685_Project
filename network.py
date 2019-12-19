@@ -52,8 +52,41 @@ def val(net):
             continue
     return False
 
-def topo_sort(net):
-    pass
+def topoSort(net):
+    vis = []
+    stack = []
+    
+    for node in net:
+        if not node in vis:
+            topo_dfs(node, vis, stack)
+            
+    return stack
+    
+def topo_dfs(node, vis, stack):
+    if not node in vis:
+        vis.append(node)
+    
+    for p in node.par:
+        if p in stack:
+            continue
+
+        else:
+            topo_dfs(p, vis, stack)
+    stack.append(node)
+
+def is_dpord(l):
+    """
+    Function to check a node list is ordered parent to child
+    """
+    for i in range(0, len(l) -1):
+        pi = l[i].par
+        for j in pi:
+            for k in range(i+1, len(l)):
+                if j == l[k]:
+                    return False
+                else:
+                    continue
+    return True
 
 
 class node:
@@ -257,7 +290,7 @@ class net:
         self.siz = size
         self.nds = {}
         for i in range(0, self.siz):
-            self.nds[i] = node(i, outcomes = self.ocm)
+            self.nds[i] = node(i, outcomes = outcomes)
         return self
     
     def fill_data(self, data):
@@ -268,7 +301,6 @@ class net:
                 outcomes = data[data.columns[i]].unique().tolist()
             )
         
-    
     def add_edge(self, p_idx, c_idx):
         if p_idx != c_idx:
             self.nds[c_idx].add_parents([self.nds[p_idx]])
@@ -296,21 +328,6 @@ class net:
             n = self.nds[k]
             n.node_probs(data = data, alpha = alpha, by=by)
 
-    def is_dpord(self, l):
-        """
-        Function to check a node list is ordered parent to child
-        """
-        for i in range(0, len(l) -1):
-            pi = l[i].par
-            for j in pi:
-                for k in range(i+1, len(l)):
-                    if j == l[k]:
-                        return False
-                    else:
-                        continue
-        return True
-
-    def sort_nodes(self, l):
         stop = 0
         l = l #list(self.nds.values())
         p = 0
@@ -325,7 +342,7 @@ class net:
 
             stop = stop + 1
         return(l)
-        
+    
     def calc_prob(self, query):
         l = list(self.nds.values())
         if(len(query) != self.siz):
@@ -436,6 +453,9 @@ class net:
         pscore = net.log_probability(data).sum()
         return pscore
         
+    def export_nds(self):
+        return list(self.nds.values())
+    
     def export_dag(self):
         dag = np.zeros([self.siz, self.siz], int)
         for k in self.nds.keys():
@@ -543,11 +563,11 @@ class net:
         return (topStates, depStates, model)
                     
     def print_nodes(self):
-        for k in self.nds.keys():
+        for k in self.nds.values():
             print(
-                "Node:", k,
-                "Parents:", self.nds[k].parent_idx(),
-                "Children:",[j.idx for j in self.nds[k].chl]
+                "Node:", k.idx,
+                "Parents:", k.parent_idx(),
+                "Children:", [j.idx for j in self.nds.values() if k in j.par]
             )
 
 

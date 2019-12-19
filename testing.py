@@ -12,6 +12,32 @@ from pomegranate import *
 
 
 
+
+
+
+
+# Validate Sort using Randomly Generated Acyclic Networks
+for i in range(0,100):
+    n = net(size=20, outcomes=(0,1))
+    used = []
+    for i in n.nds.keys():
+        used.append(i)
+        for j in set(n.nds.keys()).difference(used):
+            if rn.choices([True, False])[0]:
+                n.add_edge(i, j)      
+    
+       #print(net[i].idx, [ j.idx for j in net[i].par])
+    l = n.export_nds()
+    rn.shuffle(l)
+    m = topoSort(l)
+    if val(n.nds):
+        for i in n.nds.keys():
+            print(n.nds[i].idx, [ j.idx for j in n.nds[i].par])     
+    print(val(n.nds))
+    
+    
+    
+    
 # n = net().fill_un
 
 # n.add_edge(0,1)
@@ -106,52 +132,56 @@ from pomegranate import *
 # G3 = node(3, label="G3", parents=[G2, G1])
 
 
-data={
-      'G1':[rn.choices([0,1], weights=[0.5, 0.5])[0] for i in range(0,2000)],
-      'G2':[rn.choices(['A', 'B', 'C'], weights=[0.15, 0.3, 0.55])[0] for i in range(0,2000)]  
-      }
+# data={
+#       'G1':[rn.choices([0,1], weights=[0.5, 0.5])[0] for i in range(0,2000)],
+#       'G2':[rn.choices(['A', 'B', 'C'], weights=[0.15, 0.3, 0.55])[0] for i in range(0,2000)]  
+#       }
 
-def pfun(a,b):
-    if a==1:
-        if b == 'A':
-            return rn.choices([0,1], weights=[0.9,0.1])[0]
-        elif b == 'B':
-            return rn.choices([0,1], weights=[0.1,0.9])[0]
-        elif b =='C':
-            return rn.choices([0,1], weights=[0.9,0.1])[0]
-    
-    if a==0:
-        if b == 'A':
-            return rn.choices([0,1], weights=[0.1,0.9])[0]
-        elif b == 'B':
-            return rn.choices([0,1], weights=[0.1,0.9])[0]
-        elif b =='C':
-            return rn.choices([0,1], weights=[0.1,0.9])[0]
-# def ofun(a):
+# def pfun(a,b):
 #     if a==1:
-#         return rn.choices([0,1], weights=[0.9,0.1])[0]
-#     else:
-#         return rn.choices([0,1], weights=[0.1,0.9])[0]
+#         if b == 'A':
+#             return rn.choices([0,1], weights=[0.9,0.1])[0]
+#         elif b == 'B':
+#             return rn.choices([0,1], weights=[0.1,0.9])[0]
+#         elif b =='C':
+#             return rn.choices([0,1], weights=[0.9,0.1])[0]
     
-data['G3'] = [
-    pfun(data['G1'][i], data['G2'][i]) 
-    for i in range(0,len(data['G1']))
-    ]
-
+#     if a==0:
+#         if b == 'A':
+#             return rn.choices([0,1], weights=[0.1,0.9])[0]
+#         elif b == 'B':
+#             return rn.choices([0,1], weights=[0.1,0.9])[0]
+#         elif b =='C':
+#             return rn.choices([0,1], weights=[0.1,0.9])[0]
+# # def ofun(a):
+# #     if a==1:
+# #         return rn.choices([0,1], weights=[0.9,0.1])[0]
+# #     else:
+# #         return rn.choices([0,1], weights=[0.1,0.9])[0]
+    
 # data['G3'] = [
-#     ofun(data['G1'][i]) 
+#     pfun(data['G1'][i], data['G2'][i]) 
 #     for i in range(0,len(data['G1']))
 #     ]
 
-data = pd.DataFrame(data)
+# # data['G3'] = [
+# #     ofun(data['G1'][i]) 
+# #     for i in range(0,len(data['G1']))
+# #     ]
+
+# data = pd.DataFrame(data)
+
+# n = net(data=data)
+
+# n.add_edge(2,0)
+# n.add_edge(0,1)
+# n.add_edge(2,1)
 
 
-
-
-# data['G2'] = data['G2'].astype('str')
-# G1.node_probs(data, alpha=0.00001, by='label')
-# G2.node_probs(data, alpha=0.00001, by='label')
-# G3.node_probs(data, alpha=0.00001, by='label')
+# # data['G2'] = data['G2'].astype('str')
+# # G1.node_probs(data, alpha=0.00001, by='label')
+# # G2.node_probs(data, alpha=0.00001, by='label')
+# # G3.node_probs(data, alpha=0.00001, by='label')
 
 # bn = BayesianNetwork.from_samples(data)
 
