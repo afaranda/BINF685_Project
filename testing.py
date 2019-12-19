@@ -5,6 +5,8 @@ import random as rn
 from network import node
 from network import net
 from network import val
+from network import topoSort
+from network import sample_net
 
 from matplotlib import pyplot as plt
 from pyitlib import discrete_random_variable as drv
@@ -12,28 +14,229 @@ from pomegranate import *
 
 
 
+######### Validate Sampler on Randomly Generated Data:
+data={
+      'G2':[rn.choices([0,1], weights=[0.5, 0.5])[0] for i in range(0,2000)] 
+      }
 
 
-
-
-# Validate Sort using Randomly Generated Acyclic Networks
-for i in range(0,100):
-    n = net(size=20, outcomes=(0,1))
-    used = []
-    for i in n.nds.keys():
-        used.append(i)
-        for j in set(n.nds.keys()).difference(used):
-            if rn.choices([True, False])[0]:
-                n.add_edge(i, j)      
+# Using this function, G3 is dependent on G1 -- independent of G2
+def ofun(a):
+    if a==1:
+        return rn.choices([0,1], weights=[0.9,0.1])[0]
+    else:
+        return rn.choices([0,1], weights=[0.1,0.9])[0]
     
-       #print(net[i].idx, [ j.idx for j in net[i].par])
-    l = n.export_nds()
-    rn.shuffle(l)
-    m = topoSort(l)
-    if val(n.nds):
-        for i in n.nds.keys():
-            print(n.nds[i].idx, [ j.idx for j in n.nds[i].par])     
-    print(val(n.nds))
+
+data['G1'] = [
+    ofun(data['G2'][i]) 
+    for i in range(0,len(data['G2']))
+    ]
+
+data['G3'] = [
+    rn.choices(
+        ['A', 'B', 'C'], 
+        weights=[0.15, 0.3, 0.55])[0] 
+    for i in range(0,2000)
+] 
+
+
+
+data = pd.DataFrame(data)
+data = data[['G1', 'G2', 'G3']]
+
+n = net(data=data)
+n.add_edge(1,0)
+n.calc_cpt(data)
+
+data2 = sample_net(n, 2000)
+
+m=net(data=data2)
+m.add_edge(1,0)
+m.calc_cpt(data2)
+
+
+
+
+
+
+# ###### Pandas Testing
+
+# df=pd.DataFrame({
+#     0:[0,0,0,0,1,1,1,1],
+#     2:[0,0,1,1,0,0,1,1],
+#     1:[0,1,0,1,0,1,0,1],
+#     'Prob':[10/20, 10/20, 1/10, 9/10, 9/10, 1/10, 4/10, 6/10 ]
+    
+    
+#     })
+
+# gr=df.groupby([0,2]).groups
+
+
+# rn.choices(
+#     df.loc[gr[(0,0)]][1].values,
+#     df.loc[gr[(0,0)]]['Prob'].values
+#     )[0]   
+
+
+    
+# r = 2    
+# df = []
+# x = 0
+# while x < r:
+#     l = topoSort(n.export_nds())
+#     row = {}
+#     for m in l:
+#         if len(m.par) > 1:
+#             gr = m.cpt.groupby([j.idx for j in m.par]).groups
+#             po = tuple(
+#                 [row[k] for k in [j.idx for j in m.par] ][0]
+#             )
+#             print(po)
+#             row[m.idx] = rn.choices(
+#                     m.cpt.loc[gr[po]][m.idx].values,
+#                     m.cpt.loc[gr[po]]['Prob'].values
+#             )[0]
+            
+#         elif len(m.par) > 0:
+#             gr = m.cpt.groupby([j.idx for j in m.par]).groups
+#             po = row[m.par[0].idx]
+#             print(po)
+#             row[m.idx] = rn.choices(
+#                     m.cpt.loc[gr[po]][m.idx].values,
+#                     m.cpt.loc[gr[po]]['Prob'].values
+#             )[0]
+            
+#         else:
+#             print("noPar")
+#             row[m.idx] = rn.choices(
+#                 m.cpt[m.idx],
+#                 m.cpt['Prob']
+#             )[0]
+#     df.append(
+#         [row[k] for k in sorted(row.keys())]  
+#     )
+#     x=x+1
+    
+    
+    
+# r = 2    
+# df = []
+# x = 0
+# while x < r:
+#     l = topoSort(n.export_nds())
+#     row = {}
+#     for m in l:
+#         if len(m.par) > 1:
+#             gr = m.cpt.groupby([j.label for j in m.par]).groups
+#             po = tuple(
+#                 [row[k] for k in [j.label for j in m.par] ]
+#             )
+#             print(po)
+#             row[m.label] = rn.choices(
+#                     m.cpt.loc[gr[po]][m.label].values,
+#                     m.cpt.loc[gr[po]]['Prob'].values
+#             )[0]
+            
+#         elif len(m.par) > 0:
+#             gr = m.cpt.groupby([j.label for j in m.par]).groups
+#             po = row[m.par[0].label]
+#             print(po)
+#             row[m.label] = rn.choices(
+#                     m.cpt.loc[gr[po]][m.label].values,
+#                     m.cpt.loc[gr[po]]['Prob'].values
+#             )[0]
+            
+#         else:
+#             print("noPar")
+#             row[m.label] = rn.choices(
+#                 m.cpt[m.label],
+#                 m.cpt['Prob']
+#             )[0]
+            
+#     df.append([row[k] for k in
+#         [{i.idx:i.label for i in l}[j] 
+#         for j in sorted(
+#                 {i.idx:i.label for i in l}.keys()
+#             )]
+#         ]) 
+#     x=x+1
+
+
+# def sample_net(net, r):
+#     """
+#     Using a simple 'prior sampling' approach, generate 
+#     n samples from this 'net' object.
+#     """
+
+#     return df
+            
+    # For each node in a topologically sorted node list
+    #     Sample the outcome of the node, based on it's CPT,
+    #     Given the outcomes of it's parents (If any)
+    #     Add the sampled outcome to a node-outcome dictionary
+    
+    # Sort the Node-Outcome dictionary in order of index
+    # Append the list of outcomes to a growing table of samples
+    # Return the table of samples when all
+    
+    
+    # if self.by == 'index':
+    #     while x < n:
+    #         l = topoSort(self.export_nds())
+    #         row = {}
+    #         for i in l:
+    #             var = i.cpt.columns.drop('Prob')
+    #             prior = {k:row[k] for k in row.keys() if k in var}
+    #             c = i.cpt.copy()
+    #             c = c.sort_values(by=list(c.columns))
+
+    #             # Subset cpt
+    #             #print(prior)
+    #             for j in prior.keys():
+    #                     c = c[c[j] == prior[j]]
+
+    #             s = rn.uniform()
+    #             #print("NODE:", i.idx, "Draw:", s)
+    #             #print(c)
+    #             #print(c.loc[c[i.idx] == 0, 'Prob'])
+                
+    #             if s < c.loc[c[i.idx] == 0, 'Prob'].values[0]:
+    #                 row[i.idx] = 0
+    #             else:
+    #                 row[i.idx] = 1
+    #             #print(row.keys(), row.values())
+    #         df.append([row[m] for m in sorted(row.keys())])
+    #         x = x + 1
+    #     df = pd.DataFrame(df)
+    #     return(df)
+
+
+
+
+
+
+
+
+# # Validate Sort using Randomly Generated Acyclic Networks
+# for i in range(0,100):
+#     n = net(size=20, outcomes=(0,1))
+#     used = []
+#     for i in n.nds.keys():
+#         used.append(i)
+#         for j in set(n.nds.keys()).difference(used):
+#             if rn.choices([True, False])[0]:
+#                 n.add_edge(i, j)      
+    
+#        #print(net[i].idx, [ j.idx for j in net[i].par])
+#     l = n.export_nds()
+#     rn.shuffle(l)
+#     m = topoSort(l)
+#     if val(n.nds):
+#         for i in n.nds.keys():
+#             print(n.nds[i].idx, [ j.idx for j in n.nds[i].par])     
+#     print(val(n.nds))
     
     
     

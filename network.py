@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import random as rn
 import pomegranate as pm
 #import itertools as it
 #from math import log
@@ -75,6 +76,7 @@ def topo_dfs(node, vis, stack):
     stack.append(node)
 
 def is_dpord(l):
+    
     """
     Function to check a node list is ordered parent to child
     """
@@ -88,7 +90,81 @@ def is_dpord(l):
                     continue
     return True
 
-
+def sample_net(net, r=10):
+    df = []
+    x = 0
+    l = topoSort(net.export_nds())
+    if net.by == 'index':
+        while x < r:
+            row = {}
+            for m in l:
+                if len(m.par) > 1:
+                    gr = m.cpt.groupby([j.idx for j in m.par]).groups
+                    po = tuple(
+                        [row[k] for k in [j.idx for j in m.par] ][0]
+                    )
+                    row[m.idx] = rn.choices(
+                            m.cpt.loc[gr[po]][m.idx].values,
+                            m.cpt.loc[gr[po]]['Prob'].values
+                    )[0]
+                    
+                elif len(m.par) > 0:
+                    gr = m.cpt.groupby([j.idx for j in m.par]).groups
+                    po = row[m.par[0].idx]
+                    row[m.idx] = rn.choices(
+                            m.cpt.loc[gr[po]][m.idx].values,
+                            m.cpt.loc[gr[po]]['Prob'].values
+                    )[0]
+                    
+                else:
+                    row[m.idx] = rn.choices(
+                        m.cpt[m.idx],
+                        m.cpt['Prob']
+                    )[0]
+            df.append(
+                [row[k] for k in sorted(row.keys())]  
+            )
+            x=x+1
+        return pd.DataFrame(df)
+    
+    elif net.by == 'label':
+        while x < r:
+            row = {}
+            for m in l:
+                if len(m.par) > 1:
+                    gr = m.cpt.groupby([j.label for j in m.par]).groups
+                    po = tuple(
+                        [row[k] for k in [j.label for j in m.par] ]
+                    )
+                    row[m.label] = rn.choices(
+                            m.cpt.loc[gr[po]][m.label].values,
+                            m.cpt.loc[gr[po]]['Prob'].values
+                    )[0]
+                    
+                elif len(m.par) > 0:
+                    gr = m.cpt.groupby([j.label for j in m.par]).groups
+                    po = row[m.par[0].label]
+                    row[m.label] = rn.choices(
+                            m.cpt.loc[gr[po]][m.label].values,
+                            m.cpt.loc[gr[po]]['Prob'].values
+                    )[0]
+                    
+                else:
+                    row[m.label] = rn.choices(
+                        m.cpt[m.label],
+                        m.cpt['Prob']
+                    )[0]
+                    
+            df.append([row[k] for k in
+                [{i.idx:i.label for i in l}[j] 
+                for j in sorted(
+                        {i.idx:i.label for i in l}.keys()
+                    )]
+                ]) 
+            x=x+1
+           
+        return pd.DataFrame(df, columns=[{i.idx:i.label for i in l}[j] 
+                for j in sorted({i.idx:i.label for i in l}.keys())])
 class node:
     '''
     A node represents a single variable in the Bayes Net. Each node stores a
@@ -279,18 +355,21 @@ class net:
     def __init__(self, size=None, outcomes=None, data=None):
         self.siz = None
         self.nds = {}
+        self.by =None
         
         if not (size == None and outcomes == None) and data == None:
             self.fill_uniform(size, outcomes)
+            self.by = 'index'
             
         elif isinstance(data, pd.DataFrame):
             self.fill_data(data)
+            self.by = 'label'
     
     def fill_uniform(self, size=5, outcomes=(0,1)):
         self.siz = size
         self.nds = {}
         for i in range(0, self.siz):
-            self.nds[i] = node(i, outcomes = outcomes)
+            self.nds[i] = node(i, label=i, outcomes = outcomes)
         return self
     
     def fill_data(self, data):
@@ -318,7 +397,7 @@ class net:
     def acyclic(self):
         return not val(self.nds)
           
-    def calc_cpt(self, data, alpha=0.001, by='index'):
+    def calc_cpt(self, data, alpha=0.001):
         """
         Calculate CPT probabilities for all nodes in the
         network given the data. If dolumn names in the data do not match
@@ -326,112 +405,8 @@ class net:
         """
         for k in self.nds.keys():
             n = self.nds[k]
-            n.node_probs(data = data, alpha = alpha, by=by)
-
-        stop = 0
-        l = l #list(self.nds.values())
-        p = 0
-        while (not self.is_dpord(l)) and stop <1000:
-            pi = l[p].par
-            for i in range(p, len(l)):
-                if l[i] in pi:
-                    l.insert(len(l), l.pop(p))
-                    break
-                elif i+1 == len(l):
-                    p = p + 1
-
-            stop = stop + 1
-        return(l)
+            n.node_probs(data = data, alpha = alpha, by=self.by)
     
-    def calc_prob(self, query):
-        l = list(self.nds.values())
-        if(len(query) != self.siz):
-            print('Invalid Query')
-            return False
-        prob = []
-        # Assume that the variables in the query correspond
-        # to their position eg query[0] is Var 0, query[1] = Var 1 etc. . .
-        
-        for i in l:
-            var = i.cpt.columns.drop('Prob')
-            val = [query[j] for j in var ]
-            c = i.cpt.copy()
-            for j in range(0, len(val)):
-                c = c[c[var[j]] == val[j]]
-            prob.append(c['Prob'].values[0])
-        return(np.prod(prob))
-
-    def sample_net(self, n):
-        """
-        Using a simple 'prior sampling' approach, generate 
-        n samples from this 'net' object.
-        """
-        df = []
-        x = 0
-        while x < n:
-            l = self.sort_nodes(list(self.nds.values()))
-            row = {}
-            for i in l:
-                var = i.cpt.columns.drop('Prob')
-                prior = {k:row[k] for k in row.keys() if k in var}
-                c = i.cpt.copy()
-                c = c.sort_values(by=list(c.columns))
-
-                # Subset cpt
-                #print(prior)
-                for j in prior.keys():
-                        c = c[c[j] == prior[j]]
-
-                s = np.random.uniform()
-                #print("NODE:", i.idx, "Draw:", s)
-                #print(c)
-                #print(c.loc[c[i.idx] == 0, 'Prob'])
-                
-                if s < c.loc[c[i.idx] == 0, 'Prob'].values[0]:
-                    row[i.idx] = 0
-                else:
-                    row[i.idx] = 1
-                #print(row.keys(), row.values())
-            df.append([row[m] for m in sorted(row.keys())])
-            x = x + 1
-        df = pd.DataFrame(df)
-        return(df)
-    
-    def gibbs(self, n):
-        # Randomly initialize values for all possible variables
-        val = []
-        samples={}
-        for k in self.nds.keys():
-            nd=self.nds[k]
-            val.append(np.random.choice(nd.ocm))
-            samples[k]=[]
-            
-        l = self.sort_nodes(list(self.nds.values()))
-        #print(val)
-        # Generate "n" samples by rotating through each variable
-        while n > 0:          
-            pos = n % len(self.nds)
-            node= l[pos]        
-            par = self.nds[pos].parent_idx()
-            ocm = self.nds[pos].ocm
-            cpt = self.nds[pos].cpt.copy()
-            if len(par) > 0:
-                idx = pd.MultiIndex.from_tuples(
-                    [tuple([val[j] for j in par] + [o]) for o in ocm],
-                    names = par + [pos]
-                )
-            else:
-                idx = pd.Index(ocm).set_names(pos)
-
-            oc = cpt.set_index(par + [pos]).loc[idx].reset_index()[pos].values
-            pr = cpt.set_index(par + [pos]).loc[idx].reset_index()['Prob'].values
-            new_value = np.random.choice(oc, p=pr)
-            val[pos] = new_value
-            for k in samples.keys():
-                samples[k].append(val[k])
-            n = n - 1
-            
-        return(pd.DataFrame(samples))
         
     def score_net(self, data):
         """
@@ -449,8 +424,8 @@ class net:
         
         # Reformat data for pomegranate scoring
         data.columns = ["G" + str(i) for i in data.columns]
-        net = self.export_pom()[2]
-        pscore = net.log_probability(data).sum()
+        bn = self.export_pom()[2]
+        pscore = bn.log_probability(data).sum()
         return pscore
         
     def export_nds(self):
@@ -864,3 +839,41 @@ class net:
 #         # Dump the dummy group 
 #         if par[0] == 'dummy':
 #             SELF.CPT = cpt.drop(columns = ['dummy'])
+
+
+# # Old Gibbs Sampler Code
+    # def gibbs(self, n):
+    #     # Randomly initialize values for all possible variables
+    #     val = []
+    #     samples={}
+    #     for k in self.nds.keys():
+    #         nd=self.nds[k]
+    #         val.append(np.random.choice(nd.ocm))
+    #         samples[k]=[]
+            
+    #     l = self.sort_nodes(list(self.nds.values()))
+    #     #print(val)
+    #     # Generate "n" samples by rotating through each variable
+    #     while n > 0:          
+    #         pos = n % len(self.nds)
+    #         node= l[pos]        
+    #         par = self.nds[pos].parent_idx()
+    #         ocm = self.nds[pos].ocm
+    #         cpt = self.nds[pos].cpt.copy()
+    #         if len(par) > 0:
+    #             idx = pd.MultiIndex.from_tuples(
+    #                 [tuple([val[j] for j in par] + [o]) for o in ocm],
+    #                 names = par + [pos]
+    #             )
+    #         else:
+    #             idx = pd.Index(ocm).set_names(pos)
+
+    #         oc = cpt.set_index(par + [pos]).loc[idx].reset_index()[pos].values
+    #         pr = cpt.set_index(par + [pos]).loc[idx].reset_index()['Prob'].values
+    #         new_value = np.random.choice(oc, p=pr)
+    #         val[pos] = new_value
+    #         for k in samples.keys():
+    #             samples[k].append(val[k])
+    #         n = n - 1
+            
+    #     return(pd.DataFrame(samples))
