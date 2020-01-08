@@ -12,16 +12,17 @@ import pomegranate as pm
 #                                                                           #
 #############################################################################
 
-# def fl(l):
-#     '''
-#     Helper Function that converts CPT Variable-Outcomes from "float64"
-#     to "int" after extraction via "n.cpt.values.tolist()"
-#     '''
-#     return [
-#         int(l[j])
-#         if j % len(l) < len(l) - 1 
-#         else l[j] for j in range(0, len(l))
-#     ]
+def fl(l):
+    '''
+    Helper Function that converts CPT Variable-Outcomes from "float64"
+    to "int" after extraction via "n.cpt.values.tolist()"
+    '''
+    return [
+        int(l[j])
+        if j % len(l) < len(l) - 1 
+        else l[j] for j in range(0, len(l))
+    ]
+
 def dfs(node, vis):
     
     vis[node] = "G"
@@ -89,6 +90,8 @@ def is_dpord(l):
                 else:
                     continue
     return True
+
+
 
 def sample_net(net, r=10):
     df = []
@@ -165,6 +168,161 @@ def sample_net(net, r=10):
            
         return pd.DataFrame(df, columns=[{i.idx:i.label for i in l}[j] 
                 for j in sorted({i.idx:i.label for i in l}.keys())])
+    
+def export_pom(net, by='index'):
+    '''
+    Returns
+    -------
+    pomegranate BN Model based on given DAG.
+    Assume my "sort" function correctly returns a list where
+    children are allways ranked higher than parents. If Pommegranate is used
+    to estimate model likelihood, all outcomes must be of the same data type. 
+    Either All int or all string. 
+    '''
+    s = topoSort(net.export_nds())
+    model = pm.BayesianNetwork("DIY_GRN")
+    
+    
+    # Convert Top Level nodes to Discrete distributions
+    top = [i for i in s if len(i.par) == 0]
+    topStates = {}
+    
+    for n in top:
+        pr = n.cpt['Prob'].to_dict()
+        if by == 'index':
+            va = n.cpt[n.idx].to_dict()
+        else:
+            va = n.cpt[n.label].to_dict()
+        dist = {}
+        for v in va.keys():
+            dist[va[v]] = pr[v]
+            
+        dist=pm.DiscreteDistribution(dist)
+        if by == 'index':
+            state = pm.Node(dist, name = str(n.idx))
+            topStates[str(n.idx)] = state
+        else:
+            state = pm.Node(dist, name = str(n.label))
+            topStates[str(n.label)] = state
+            
+
+            
+        model.add_state(state)
+
+    # Convert Depent Nodes to Conditional Distributions
+    dep = [i for i in s if len(i.par) != 0]
+    depStates = {}
+   
+    for n in dep:
+        
+        # Convert floats cpt outcome levels to integers if needed
+        if isinstance(n.cpt.iloc[0,0], np.int64):
+            cpt = [fl(l) for l in n.cpt.values.tolist()]
+        
+        else:
+            cpt = n.cpt.values.tolist()
+            
+        # Vector of ID for each parent
+        if by == 'index':
+            par_id = [str(i.idx) for i in n.par ]
+        else:
+            par_id = [str(i.label) for i in n.par ]
+    
+        
+        # Validate that all parents have been processed
+        for p  in par_id:
+            if (not p in topStates.keys()) and (not p in depStates.keys()):
+                print("Problem with parent:",p, "of node:",n.idx)
+                return [topStates, depStates]
+        
+        # Get all parents found in the topStates dict
+        par = [ 
+                topStates[i]
+                for i in par_id if i in topStates.keys()
+        ]
+        
+        
+        # Add all parents in the depStates dict
+        par = par + [
+            depStates[i]
+            for i in par_id if i in depStates.keys()
+        ]
+    
+        cpt = pm.ConditionalProbabilityTable(
+            cpt,
+            [p.distribution for p in par] 
+        )
+        
+        if by == 'index':
+            state =  pm.Node(cpt, name = str(n.idx))
+            depStates[str(n.idx)] = state
+            
+        else:
+            state =  pm.Node(cpt, name = str(n.label))
+            depStates[str(n.label)] = state
+            
+        # Add node to model
+        model.add_state(state)
+        
+        # Add edges from parent to this node
+        for p in par:
+            model.add_edge(p, state)
+        
+    
+    # Assemble and "Bake" model
+    model.bake()
+    return (model)
+
+
+def score_net(net, data):
+    lp = data.apply(data_prob, nds=net.export_nds(), axis=1)
+    return(sum(lp))
+    l = topoSort(net.export_nds())
+    if net.by == 'index':
+        df = data[[i.idx for i in l]].copy()
+        for node in l:
+            var = node.cpt.columns.drop('Prob').tolist()
+            grp = node.cpt.groupby(var).groups
+            cpt = node.cpt.copy()
+                                   
+            vkeys = df[var].apply(lambda x: tuple(x), axis=1)
+ 
+        pass
+        var = node.cpt.columns.drop('Prob')
+        pass
+    
+def data_prob(r, nds):
+    '''
+    This function is intended to be used with the 'apply' method for a pandas
+    data frame, containing the data to be learned
+
+    Parameters
+    ----------
+    r : Pandas Series
+        Row from a data set, with labels corresponding to node labels in nds
+    nds : list of nodes
+        list of nodes from a bayesian network.  each node stores a conditional
+        probability table
+
+    Returns
+    -------
+    log probability of observation 'r'
+
+    '''
+    pr = []
+    for n in nds:
+        c=n.cpt.columns.drop('Prob')
+        pr.append(
+            np.log(
+                n.cpt.set_index(list(c)).loc[tuple(r[c])].values[0]
+                )
+            )
+    return(np.array(pr).sum())
+
+def score_pom(model, data):
+    v = [i.name for i in model.states]
+    return model.log_probability(data[v]).sum()
+        
 class node:
     '''
     A node represents a single variable in the Bayes Net. Each node stores a
@@ -350,7 +508,6 @@ class node:
         return df.reset_index()
 
         
-
 class net:
     def __init__(self, size=None, outcomes=None, data=None):
         self.siz = None
@@ -362,25 +519,45 @@ class net:
             self.by = 'index'
             
         elif isinstance(data, pd.DataFrame):
-            self.fill_data(data)
+            self.fill_data(data, by='label')
             self.by = 'label'
     
     def fill_uniform(self, size=5, outcomes=(0,1)):
         self.siz = size
         self.nds = {}
         for i in range(0, self.siz):
-            self.nds[i] = node(i, label=i, outcomes = outcomes)
+            self.nds[i] = node(i, label=str(i), outcomes = outcomes)
         return self
     
-    def fill_data(self, data):
+    def fill_data(self, data, by='index'):
         self.siz = data.shape[1]
-        for i in range(0, self.siz):
+        if by == 'index':
+            for i in range(0, self.siz):
+                self.nds[i] = node(
+                    i, label = data.columns[i], 
+                    outcomes = data[data.columns[i]].unique().tolist()
+                )
+        elif by == 'label':
+            for i in range(0, self.siz):
+                self.nds[data.columns[i]] = node(
+                    i, label = data.columns[i], 
+                    outcomes = data[data.columns[i]].unique().tolist()
+                )
+        else:
+            print("Can only use 'index' or 'label' as node keys")
+            return None
+            
+    def reset(self):
+        for i in self.nds.keys():
+    
             self.nds[i] = node(
-                i, label = data.columns[i], 
-                outcomes = data[data.columns[i]].unique().tolist()
+                self.nds[i].idx, label = self.nds[i].label, 
+                outcomes = self.nds[i].ocm
             )
+
         
     def add_edge(self, p_idx, c_idx):
+        print("parent:", p_idx, "child:", c_idx)
         if p_idx != c_idx:
             self.nds[c_idx].add_parents([self.nds[p_idx]])
         
@@ -389,10 +566,8 @@ class net:
         
     def rev_edge(self, p_idx, c_idx):
         if p_idx != c_idx:
-            if p_idx in [j.idx for j in self.nds[c_idx].par]:
-                print("is_child")
-                self.del_edge(p_idx, c_idx)
-                self.add_edge(c_idx, p_idx)
+            self.del_edge(p_idx, c_idx)
+            self.add_edge(c_idx, p_idx)
 
     def acyclic(self):
         return not val(self.nds)
@@ -406,28 +581,7 @@ class net:
         for k in self.nds.keys():
             n = self.nds[k]
             n.node_probs(data = data, alpha = alpha, by=self.by)
-    
-        
-    def score_net(self, data):
-        """
-        Score this network against a data set
-        """
-        # Flatten data set to a table of unique rows with corresponding
-        # Frequencies. 
-
-        #df = data.copy()
-        #gr = [i for i in df.columns]
-        #df['Count'] = 0
-        #df = df.groupby(gr, as_index=False).count()
-        #df['Model'] = df[gr].apply(self.calc_prob, axis=1)
-        #return(df.Model.transform(log).sum())
-        
-        # Reformat data for pomegranate scoring
-        data.columns = ["G" + str(i) for i in data.columns]
-        bn = self.export_pom()[2]
-        pscore = bn.log_probability(data).sum()
-        return pscore
-        
+             
     def export_nds(self):
         return list(self.nds.values())
     
@@ -440,6 +594,7 @@ class net:
     
     def import_dag(self, dag):
         dg = dag
+        ndi = {self.nds[i].idx:i for i in self.nds.keys()}
         self.reset()
         if not isinstance(dg, np.ndarray):
             return None
@@ -449,93 +604,7 @@ class net:
         for i in range(0, len(dg)):
             for j in range(0, len(dg)):
                 if dg[i, j] == 1:
-                    self.add_edge(i, j)
-
-    def export_pom(self):
-        '''
-        Returns
-        -------
-        pomegranate BN Model based on given DAG.
-        Assume my "sort" function correctly returns a list where
-        children are allways ranked higher than parents
-        '''
-        s = self.sort_nodes( l = list(self.nds.values()))
-        model = pm.BayesianNetwork("DIY_GRN")
-        
-        
-        # Convert Top Level nodes to Discrete distributions
-        top = [i for i in s if len(i.par) == 0]
-        topStates = {}
-        
-        for n in top:
-            pr = n.cpt['Prob'].to_dict()
-            va = n.cpt[n.idx].to_dict()
-            dist = {}
-            for v in va.keys():
-                dist[va[v]] = pr[v]
-            
-            dist=pm.DiscreteDistribution(dist)
-            state = pm.Node(dist, name = "G"+str(n.idx))
-                
-            
-            topStates["G"+str(n.idx)] = state
-            model.add_state(state)
-
-        # Convert Depent Nodes to Conditional Distributions
-        dep = [i for i in s if len(i.par) != 0]
-        depStates = {}
-        
-        for n in dep:
-            
-            # Convert floats cpt outcome levels to integers if needed
-            if isinstance(n.cpt.iloc[0,0], np.int64):
-                cpt = [fl(l) for l in n.cpt.values.tolist()]
-            
-            else:
-                cpt = n.cpt.values.tolist()
-                
-            # Vector of ID for each parent
-            par_id = ["G"+str(i.idx) for i in n.par ]
-
-            
-            # Validate that all parents have been processed
-            for p  in par_id:
-                if (not p in topStates.keys()) and (not p in depStates.keys()):
-                    print("Problem with parent:",p, "of node:",n.idx)
-                    return [topStates, depStates]
-            
-            # Get all parents found in the topStates dict
-            par = [ 
-                    topStates[i]
-                    for i in par_id if i in topStates.keys()
-            ]
-            
-            
-            # Add all parents in the depStates dict
-            par = par + [
-                depStates[i]
-                for i in par_id if i in depStates.keys()
-            ]
-
-            cpt = pm.ConditionalProbabilityTable(
-                cpt,
-                [p.distribution for p in par] 
-            )
-            
-            state =  pm.Node(cpt, name = "G"+str(n.idx))
-            depStates["G"+str(n.idx)] = state
-            
-            # Add node to model
-            model.add_state(state)
-            
-            # Add edges from parent to this node
-            for p in par:
-                model.add_edge(p, state)
-            
-        
-        # Assemble and "Bake" model
-        model.bake()
-        return (topStates, depStates, model)
+                    self.add_edge(ndi[i], ndi[j])
                     
     def print_nodes(self):
         for k in self.nds.values():

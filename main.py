@@ -1,5 +1,6 @@
 import pandas as pd
-from network import greedy
+from Learners import greedy
+from network import export_pom
 
 # Load Data Tables
 train = pd.read_csv(
@@ -7,21 +8,26 @@ train = pd.read_csv(
     header=None, 
     sep="\t"
 )
+train.columns = "G"+train.columns.astype('str')
 
 test = pd.read_csv(
     'hw2_test.data', 
     header=None, 
     sep="\t"
 )
+test.columns = "G"+test.columns.astype('str')
 
 # Run Simulation 5 times, print best network from each trial
 # and tabulate results. At each trial, the network is re
 # initialized to complete independence
+train.columns = "G"+train.columns.astype('str')
+g=greedy(train)
+g.train(iterations = 300, maxmiss=10)
 
 r = False
 for i in range(1,6):
     g = greedy(train)
-    fail = g.train(iterations = 300, maxmiss=25)
+    fail = g.train(iterations = 300, maxmiss=15)
     if not r:
         t_res = pd.DataFrame(g.scores).assign(Trial = i)
         result = g.test_accuracy(test, target=6).assign(Trial = i)
