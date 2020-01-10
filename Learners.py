@@ -7,16 +7,51 @@ Created on Wed Jan  8 12:51:42 2020
 """
 import pandas as pd
 import numpy as np
+import random as rn
+from sklearn.metrics import normalized_mutual_info_score as nmi
+from sklearn.metrics import mutual_info_score as mi
+from sklearn.mixture import GaussianMixture as gm
+
 from network import net
 from network import export_pom
 from network import score_pom
+
+def best_model(X):
+    '''
+    
+
+    Parameters
+    ----------
+    X : numpy array with shape (-1,1)
+        Vector of mutual information values 
+
+    Returns
+    -------
+    best_gmm : Returns the gausian mixture model 
+
+    '''
+    lowest_bic = np.infty
+    bic = []
+    n_components_range = [1,2]
+    cv_types = ['spherical', 'tied', 'diag', 'full']
+    for cv_type in cv_types:
+        for n_components in n_components_range:
+            # Fit a Gaussian mixture with EM
+            gmm = mixture.GaussianMixture(n_components=n_components,
+                                          covariance_type=cv_type)
+            gmm.fit(X)
+            bic.append(gmm.bic(X))
+            if bic[-1] < lowest_bic:
+                lowest_bic = bic[-1]
+                best_gmm = gmm
+    return best_gmm
 
 class greedy():
     def __init__(self, data):
         if not isinstance(data, pd.DataFrame):
             return None
         else:
-            self.data = data
+            self.data = data.copy()
             self.net = net(data = self.data)
             self.net.calc_cpt(self.data)
             self.scores = {}
@@ -70,6 +105,172 @@ class greedy():
                 continue
         self.scores = scores
 
+
+class CAS_GLOBAL():
+    def __init__(self, data):
+        if not isinstance(data, pd.DataFrame):
+            return None
+        else:
+            self.data = data.copy()
+            self.net = net(data = self.data)
+            self.net.calc_cpt(self.data)
+            self.scores = {}
+            self.mi = self.pop_mi()
+            self.E = self.CAS()
+            
+
+    def pop_mi(self):
+        x = self.data.corr(mi)
+        f = lambda x, i: (
+            x[i].drop([i]) / x[i].drop([i]).sum()
+        )
+            
+        return {i:f(x,i) for i in x.columns}
+        
+    def CAS(self):
+        V = self.data.columns
+        E = set()
+
+        for v in V:
+            miv = self.mi[v]
+            mii = self.mi[v].index
+            C = list(mii)
+            m = best_model(miv.values.reshape(-1,1))
+            
+            if m.n_components > 1:
+                print("Split", v)
+                if m.means_[0] > m.means_[1]:
+                    C = m.predict(miv.values.reshape(-1,1))
+                    print("Keep 0:", C)
+                    C = [mii[i] for i in range(0,len(C)) if C[i] == 0]
+            
+                elif m.means_[0] < m.means_[1]:
+                    C = m.predict(miv.values.reshape(-1,1))
+                    print("Keep 1:",C)
+                    C = [mii[i] for i in range(0,len(C)) if C[i] == 1]
+         
+            for c in C:
+                E.add((v,c))
+                E.add((c,v))
+                
+        return E
+    
+    def train(self, iterations = 10, maxmiss=10):
+        """
+        Train using Recommended Greedy Algorithm
+        """
+        
+        
+        scores = {
+            'Iteration':[],
+            'Network':[],
+            'Score':[]
+        }
+        score_check = maxmiss
+        niter = iterations 
+        nodes = [i for i in self.data.columns]
+        best = score_pom(export_pom(self.net, by='label'), self.data)
+        
+        #print("START LOOP")
+        while score_check > 0 and niter > 0:
+            n = net(data = self.data)
+            n.import_dag(self.net.export_dag())
+            
+            ops = [n.add_edge, n.del_edge, n.rev_edge]
+            for f in ops:
+                edge = rn.sample(self.E,1)[0]
+                f(edge[0], edge[1])
+              
+            if n.acyclic():
+                n.calc_cpt(self.data, alpha = 0.001)
+                score = score_pom(export_pom(n, by='label'), self.data)
+                scores['Iteration'].append(iterations - niter)
+                scores['Network'].append(n)
+                scores['Score'].append(score)
+                #print(best, score, niter, score_check)
+                if score > best:
+                    self.net = n
+                    best = score
+                    niter = niter - 1
+                    score_check = maxmiss
+                    continue
+                else:
+                    score_check = score_check - 1
+                    niter = niter -1
+                    continue
+            else:
+                niter = niter - 1
+                continue
+        self.scores = scores            
+
+# class greedy_nmi_weighted():
+#     def __init__(self, data):
+#         if not isinstance(data, pd.DataFrame):
+#             return None
+#         else:
+#             self.data = data.copy()
+#             self.net = net(data = self.data)
+#             self.net.calc_cpt(self.data)
+#             self.scores = {}
+#             self.mi_weights = {}
+#             print(self.net.nds.keys())
+            
+#     def calc_miWeights(self):
+#         x = self.data.corr(nmi)
+#         f = lambda x, i:
+#             x[i].drop([i]) / x[i].drop([i]).sum()
+            
+#         self.mi_weights={i:f(x,i) for i in x.columns}
+        
+            
+#     def train(self, iterations = 10, maxmiss=10):
+#         """
+#         Train using Recommended Greedy Algorithm
+#         """
+        
+        
+#         scores = {
+#             'Iteration':[],
+#             'Network':[],
+#             'Score':[]
+#         }
+#         score_check = maxmiss
+#         niter = iterations 
+#         nodes = [i for i in self.data.columns]
+#         best = score_pom(export_pom(self.net, by='label'), self.data)
+        
+#         #print("START LOOP")
+#         while score_check > 0 and niter > 0:
+#             n = net(data = self.data)
+#             n.import_dag(self.net.export_dag())
+            
+#             ops = [n.add_edge, n.del_edge, n.rev_edge]
+#             for f in ops:
+#                 edge = np.random.choice(
+#                     self.mi_weights, size = 2, replace=False)
+#                 f(edge[0], edge[1])
+              
+#             if n.acyclic():
+#                 n.calc_cpt(self.data, alpha = 0.001)
+#                 score = score_pom(export_pom(n, by='label'), self.data)
+#                 scores['Iteration'].append(iterations - niter)
+#                 scores['Network'].append(n)
+#                 scores['Score'].append(score)
+#                 #print(best, score, niter, score_check)
+#                 if score > best:
+#                     self.net = n
+#                     best = score
+#                     niter = niter - 1
+#                     score_check = maxmiss
+#                     continue
+#                 else:
+#                     score_check = score_check - 1
+#                     niter = niter -1
+#                     continue
+#             else:
+#                 niter = niter - 1
+#                 continue
+#         self.scores = scores
         
 #     def get_prob(self, query, target):
 #         qr = query.copy()
