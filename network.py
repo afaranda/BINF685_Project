@@ -104,7 +104,7 @@ def sample_net(net, r=10):
                 if len(m.par) > 1:
                     gr = m.cpt.groupby([j.idx for j in m.par]).groups
                     po = tuple(
-                        [row[k] for k in [j.idx for j in m.par] ][0]
+                        [row[k] for k in [j.idx for j in m.par] ]
                     )
                     row[m.idx] = rn.choices(
                             m.cpt.loc[gr[po]][m.idx].values,
@@ -277,20 +277,8 @@ def export_pom(net, by='index'):
 def score_net(net, data):
     lp = data.apply(data_prob, nds=net.export_nds(), axis=1)
     return(sum(lp))
-    l = topoSort(net.export_nds())
-    if net.by == 'index':
-        df = data[[i.idx for i in l]].copy()
-        for node in l:
-            var = node.cpt.columns.drop('Prob').tolist()
-            grp = node.cpt.groupby(var).groups
-            cpt = node.cpt.copy()
-                                   
-            vkeys = df[var].apply(lambda x: tuple(x), axis=1)
- 
-        pass
-        var = node.cpt.columns.drop('Prob')
-        pass
     
+
 def data_prob(r, nds):
     '''
     This function is intended to be used with the 'apply' method for a pandas
@@ -322,7 +310,26 @@ def data_prob(r, nds):
 def score_pom(model, data):
     v = [i.name for i in model.states]
     return model.log_probability(data[v]).sum()
-        
+
+def edges(net):
+    
+    edges = set()
+    if net.by == 'index':
+        for i in net.nds.keys():
+            for j in net.nds[i].par:
+                edges.add((j.idx, i))
+                
+    elif net.by == 'label':
+        for i in net.nds.keys():
+            for j in net.nds[i].par:
+                edges.add((j.label, i))
+                
+    else:
+        print('Invalid Network')
+        return None
+    return edges
+
+       
 class node:
     '''
     A node represents a single variable in the Bayes Net. Each node stores a

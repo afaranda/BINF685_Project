@@ -1,6 +1,11 @@
 import pandas as pd
 from Learners import greedy
+from Learners import CASGMM
+from Learners import CASGMM_skip
+from Learners import CASJNB
 from network import export_pom
+from pomegranate import BayesianNetwork as bn
+
 
 # Load Data Tables
 train = pd.read_csv(
@@ -20,7 +25,6 @@ test.columns = "G"+test.columns.astype('str')
 # Run Simulation 5 times, print best network from each trial
 # and tabulate results. At each trial, the network is re
 # initialized to complete independence
-train.columns = "G"+train.columns.astype('str')
 g=greedy(train)
 g.train(iterations = 300, maxmiss=10)
 
