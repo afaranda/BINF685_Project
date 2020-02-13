@@ -4,6 +4,7 @@ from Learners import CASGMM
 from Learners import CASGMM_skip
 from Learners import CASJNB
 from network import export_pom
+from generate_networks import tn1, ds1, tn2, ds2, tn3, ds3
 from pomegranate import BayesianNetwork as bn
 
 

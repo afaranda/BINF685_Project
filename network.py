@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import random as rn
+import pygraphviz as pgv
 import pomegranate as pm
 #import itertools as it
 #from math import log
@@ -209,6 +210,7 @@ def export_pom(net, by='index'):
             
         model.add_state(state)
 
+    
     # Convert Depent Nodes to Conditional Distributions
     dep = [i for i in s if len(i.par) != 0]
     depStates = {}
@@ -235,17 +237,10 @@ def export_pom(net, by='index'):
                 print("Problem with parent:",p, "of node:",n.idx)
                 return [topStates, depStates]
         
-        # Get all parents found in the topStates dict
-        par = [ 
-                topStates[i]
-                for i in par_id if i in topStates.keys()
-        ]
-        
-        
-        # Add all parents in the depStates dict
-        par = par + [
-            depStates[i]
-            for i in par_id if i in depStates.keys()
+        par = [
+            topStates [i] if i in topStates.keys() else
+            depStates [i] for i in par_id
+            if i in topStates.keys() or i in depStates.keys()
         ]
     
         cpt = pm.ConditionalProbabilityTable(
@@ -273,6 +268,19 @@ def export_pom(net, by='index'):
     model.bake()
     return (model)
 
+def plot_net(net, filename, size=100, fontsize=20):
+    m=export_pom(net, by=net.by)
+    
+    G = pgv.AGraph(directed=True, size=size)
+
+    for s in m.states:
+     	G.add_node(s.name, color='red', fontsize=fontsize)
+     
+    for p, c in m.edges:
+     	G.add_edge(p.name, c.name)
+
+    G.draw(filename, format='png', prog='dot')
+    
 
 def score_net(net, data):
     lp = data.apply(data_prob, nds=net.export_nds(), axis=1)

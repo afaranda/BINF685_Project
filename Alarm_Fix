@@ -1,0 +1,600 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Feb 12 17:01:18 2020
+
+@author: adam
+"""
+alarm_net_variables={
+    'HISTORY':['TRUE', 'FALSE', 'FALSE', 'FALSE'],
+     'CVP':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+     'PCWP':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+    'HYPOVOLEMIA':['TRUE', 'FALSE', 'FALSE', 'FALSE'],
+     'LVEDVOLUME':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+     'LVFAILURE':['TRUE', 'FALSE', 'FALSE', 'FALSE'],
+     'STROKEVOLUME':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+     'ERRLOWOUTPUT':['TRUE', 'FALSE', 'FALSE', 'FALSE'],
+#    'HRBP':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+#     'HREKG':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+     'ERRCAUTER':['TRUE', 'FALSE', 'FALSE', 'FALSE'],
+#     'HRSAT':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+     'INSUFFANESTH':['TRUE', 'FALSE', 'FALSE', 'FALSE'],
+     'ANAPHYLAXIS':['TRUE', 'FALSE', 'FALSE', 'FALSE'],
+     'TPR':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+#     'EXPCO2':['ZERO','LOW', 'NORMAL', 'HIGH'],
+     'KINKEDTUBE':['TRUE', 'FALSE', 'FALSE', 'FALSE'],
+#     'MINVOL':['ZERO','LOW', 'NORMAL', 'HIGH'],
+     'FIO2':['LOW', 'NORMAL', 'NORMAL', 'NORMAL'],
+#     'PVSAT':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+#     'SAO2':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+     'PAP':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+     'PULMEMBOLUS':['TRUE', 'FALSE', 'FALSE', 'FALSE'],
+     'SHUNT':['NORMAL', 'HIGH', 'HIGH', 'HIGH'],
+     'INTUBATION':['NORMAL', 'ESOPHAGEAL', 'ONESIDED', 'ONESIDED'],
+#     'PRESS':['ZERO','LOW', 'NORMAL', 'HIGH'],
+     'DISCONNECT':['TRUE', 'FALSE', 'FALSE', 'FALSE'],
+     'MINVOLSET':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+     'VENTMACH':['ZERO','LOW', 'NORMAL', 'HIGH'],
+     'VENTTUBE':['ZERO','LOW', 'NORMAL', 'HIGH']
+#     'VENTLUNG':['ZERO','LOW', 'NORMAL', 'HIGH'],
+#     'VENTALV':['ZERO','LOW', 'NORMAL', 'HIGH'],
+#     'ARTCO2':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+#     'CATECHOL':['NORMAL', 'HIGH', 'HIGH', 'HIGH'],
+#   'HR':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+#     'CO':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+#     'BP':['LOW', 'NORMAL', 'HIGH', 'HIGH'],
+}
+
+
+tn4=net(data=pd.DataFrame(alarm_net_variables))
+tn4.nds['HYPOVOLEMIA'].cpt=tn4.nds['HYPOVOLEMIA'].empty_cpt(
+    by='label').assign(Prob=[0.2, 0.8])
+print(tn4.nds['HYPOVOLEMIA'].cpt)
+
+tn4.nds['LVFAILURE'].cpt=tn4.nds['LVFAILURE'].empty_cpt(
+    by='label').assign(Prob=[0.05, 0.95])
+print(tn4.nds['LVFAILURE'].cpt)
+
+tn4.nds['ERRLOWOUTPUT'].cpt=tn4.nds['ERRLOWOUTPUT'].empty_cpt(
+    by='label').assign(Prob=[0.05, 0.95])
+print(tn4.nds['ERRLOWOUTPUT'].cpt)
+
+tn4.nds['ERRCAUTER'].cpt=tn4.nds['ERRCAUTER'].empty_cpt(
+    by='label').assign(Prob=[0.1, 0.9])
+print(tn4.nds['ERRCAUTER'].cpt)
+
+tn4.nds['INSUFFANESTH'].cpt=tn4.nds['INSUFFANESTH'].empty_cpt(
+    by='label').assign(Prob=[0.1, 0.9])
+print(tn4.nds['INSUFFANESTH'].cpt)
+
+tn4.nds['ANAPHYLAXIS'].cpt=tn4.nds['ANAPHYLAXIS'].empty_cpt(
+    by='label').assign(Prob=[0.01, 0.99])
+print(tn4.nds['ANAPHYLAXIS'].cpt)
+
+tn4.nds['KINKEDTUBE'].cpt=tn4.nds['KINKEDTUBE'].empty_cpt(
+   by='label').assign(Prob=[0.04, 0.96])
+print(tn4.nds['KINKEDTUBE'].cpt)
+
+tn4.nds['FIO2'].cpt=tn4.nds['FIO2'].empty_cpt(
+    by='label')
+print(tn4.nds['FIO2'].cpt)
+
+tn4.nds['PULMEMBOLUS'].cpt=tn4.nds['PULMEMBOLUS'].empty_cpt(
+    by='label').assign(Prob=[0.01, 0.99])
+print(tn4.nds['PULMEMBOLUS'].cpt)
+
+tn4.nds['INTUBATION'].cpt=tn4.nds['INTUBATION'].empty_cpt(
+    by='label').assign(Prob=[0.92, 0.03, 0.05])
+print(tn4.nds['INTUBATION'].cpt)
+
+tn4.nds['DISCONNECT'].cpt=tn4.nds['DISCONNECT'].empty_cpt(
+    by='label').assign(Prob=[0.1, 0.9])
+print(tn4.nds['DISCONNECT'].cpt)
+
+tn4.nds['MINVOLSET'].cpt=tn4.nds['MINVOLSET'].empty_cpt(
+    by='label').assign(Prob=[0.05, 0.90, 0.05])
+print(tn4.nds['MINVOLSET'].cpt)
+
+tn4.add_edge('LVFAILURE', 'HISTORY')
+tn4.nds['HISTORY'].cpt=tn4.nds['HISTORY'].empty_cpt(
+    by='label').assign(Prob=[0.9, 0.1, 0.01, 0.99])
+print(tn4.nds['HISTORY'].cpt)
+
+
+tn4.add_edge('LVEDVOLUME', 'CVP')
+tn4.nds['CVP'].cpt=tn4.nds['CVP'].empty_cpt(
+    ).rename(
+        {4:'LVEDVOLUME', 1:'CVP'}, axis=1
+    ).assign(Prob=[
+        0.95, 0.04, 0.01,
+        0.04, 0.95, 0.01,
+        0.01, 0.29, 0.70
+    ])
+print(tn4.nds['CVP'].cpt)
+
+tn4.add_edge('LVEDVOLUME', 'PCWP')
+tn4.nds['PCWP'].cpt=tn4.nds['PCWP'].empty_cpt(
+    ).rename(
+        {4:'LVEDVOLUME', 2:'PCWP'}, axis=1
+    ).assign(Prob=[
+        0.95, 0.04, 0.01,
+        0.04, 0.95, 0.01,
+        0.01, 0.04, 0.95
+    ])
+print(tn4.nds['PCWP'].cpt)
+
+tn4.add_edge('HYPOVOLEMIA', 'LVEDVOLUME')
+tn4.add_edge('LVFAILURE', 'LVEDVOLUME')
+tn4.nds['LVEDVOLUME'].cpt=tn4.nds['LVEDVOLUME'].empty_cpt(
+    ).rename(
+        {3:'HYPOVOLEMIA', 5:'LVFAILURE', 4:'LVEDVOLUME'}, axis=1
+    ).assign(Prob=[
+        0.95, 0.04, 0.01,
+        0.01, 0.09, 0.90,
+        0.98, 0.01, 0.01,
+        0.05, 0.90, 0.05
+    ])
+print(tn4.nds['LVEDVOLUME'].cpt)
+
+
+tn4.add_edge('HYPOVOLEMIA', 'STROKEVOLUME')
+tn4.add_edge('LVFAILURE', 'STROKEVOLUME')
+tn4.nds['STROKEVOLUME'].cpt=tn4.nds['STROKEVOLUME'].empty_cpt(
+    ).rename(
+        {3:'HYPOVOLEMIA', 5:'LVFAILURE', 6:'STROKEVOLUME'}, axis=1
+    ).assign(Prob=[
+        0.98, 0.01, 0.01,
+        0.50, 0.49, 0.01,
+        0.95, 0.04, 0.01,
+        0.05, 0.90, 0.05
+    ])
+print(tn4.nds['STROKEVOLUME'].cpt)
+
+
+tn4.add_edge('PULMEMBOLUS', 'PAP')
+tn4.nds['PAP'].cpt=tn4.nds['PAP'].empty_cpt(
+    ).rename(
+        {22:'PULMEMBOLUS', 21:'PAP'}, axis=1
+    ).assign(Prob=[
+        0.01, 0.19, 0.80,
+        0.05, 0.90, 0.05
+    ])
+print(tn4.nds['PAP'].cpt)
+
+
+tn4.add_edge('ANAPHYLAXIS', 'TPR')
+tn4.nds['TPR'].cpt=tn4.nds['TPR'].empty_cpt(
+    ).rename(
+        {13:'ANAPHYLAXIS', 14:'TPR'}, axis=1
+    ).assign(Prob=[
+        0.98, 0.01, 0.01,
+        0.3, 0.4, 0.3
+    ])
+print(tn4.nds['TPR'].cpt)
+
+tn4.add_edge('PULMEMBOLUS', 'SHUNT')
+tn4.add_edge('INTUBATION', 'SHUNT')
+tn4.nds['SHUNT'].cpt=tn4.nds['SHUNT'].empty_cpt(
+    ).rename(
+        {22:'PULMEMBOLUS', 24:'INTUBATION', 23:'SHUNT'}, axis=1
+    ).assign(Prob=[
+        0.1, 0.9,
+        0.1, 0.9,
+        0.01, 0.99,
+        0.95, 0.05,
+        0.95, 0.05,
+        0.05, 0.95
+    ])
+print(tn4.nds['SHUNT'].cpt)
+
+
+tn4.add_edge('MINVOLSET', 'VENTMACH')
+tn4.nds['VENTMACH'].cpt=tn4.nds['VENTMACH'].empty_cpt(
+    ).rename(
+        {27:'MINVOLSET', 28:'VENTMACH'}, axis=1
+    ).assign(Prob=[
+        0.05, 0.93, 0.01, 0.01,
+        0.05, 0.01, 0.93, 0.01,
+        0.05, 0.01, 0.01, 0.93
+    ])
+print(tn4.nds['VENTMACH'].cpt)
+
+
+# probability ( VENTTUBE | DISCONNECT, VENTMACH ) {
+#   (TRUE, ZERO) 0.97, 0.01, 0.01, 0.01;
+#   (FALSE, ZERO) 0.97, 0.01, 0.01, 0.01;
+#   (TRUE, LOW) 0.97, 0.01, 0.01, 0.01;
+#   (FALSE, LOW) 0.97, 0.01, 0.01, 0.01;
+#   (TRUE, NORMAL) 0.97, 0.01, 0.01, 0.01;
+#   (FALSE, NORMAL) 0.01, 0.97, 0.01, 0.01;
+#   (TRUE, HIGH) 0.01, 0.01, 0.97, 0.01;
+#   (FALSE, HIGH) 0.01, 0.01, 0.01, 0.97;
+# }
+
+tn4.add_edge('VENTMACH', 'VENTTUBE')
+tn4.add_edge('DISCONNECT', 'VENTTUBE')
+tn4.nds['VENTTUBE'].cpt=tn4.nds['VENTTUBE'].empty_cpt(
+    by='label').assign(Prob=[
+        0.97, 0.01, 0.01, 0.01,
+        0.97, 0.01, 0.01, 0.01,
+        0.97, 0.01, 0.01, 0.01,
+        0.97, 0.01, 0.01, 0.01,
+        0.97, 0.01, 0.01, 0.01,
+        0.01, 0.97, 0.01, 0.01,
+        0.01, 0.01, 0.97, 0.01,
+        0.01, 0.01, 0.01, 0.97
+    ])
+print(tn4.nds['VENTTUBE'].cpt)
+
+x=export_pom(tn4, by='label')
+#y.bake()
+#y
+
+x
+
+# tn4.add_edge('ERRLOWOUTPUT', 'HRBP')
+# tn4.add_edge('HR', 'HRBP')
+# tn4.nds['HRBP'].cpt=tn4.nds['HRBP'].empty_cpt(
+#     ).rename(
+#         {7:'ERRLOWOUTPUT', 34:'HR', 8:'HRBP'}, axis=1
+#     ).assign(Prob=[
+#         0.98, 0.01, 0.01,
+#         0.3, 0.4, 0.3,
+#         0.01, 0.98, 0.01,
+#         0.40, 0.59, 0.01,
+#         0.98, 0.01, 0.01,
+#         0.01, 0.01, 0.98
+#     ])
+# print(tn4.nds['HRBP'].cpt)
+
+
+# tn4.add_edge('ERRCAUTER', 'HREKG')
+# tn4.add_edge('HR', 'HREKG')
+# tn4.nds['HREKG'].cpt=tn4.nds['HREKG'].empty_cpt(
+#     ).rename(
+#         {10:'ERRCAUTER', 34:'HR', 9:'HREKG'}, axis=1
+#     ).assign(Prob=[
+#         1./3, 1./3, 1./3,
+#         1./3, 1./3, 1./3,
+#         0.01, 0.98, 0.01,
+#         1./3, 1./3, 1./3,
+#         0.98, 0.01, 0.01,
+#          0.01, 0.01, 0.98
+        
+#     ])
+# print(tn4.nds['HREKG'].cpt)
+
+# tn4.add_edge('ERRCAUTER', 'HRSAT')
+# tn4.add_edge('HR', 'HRSAT')
+# tn4.nds['HRSAT'].cpt=tn4.nds['HRSAT'].empty_cpt(
+#     ).rename(
+#         {10:'ERRCAUTER', 34:'HR', 11:'HRSAT'}, axis=1
+#     ).assign(Prob=[
+#         1./3, 1./3, 1./3,
+#         1./3, 1./3, 1./3,
+#         0.01, 0.98, 0.01,
+#         1./3, 1./3, 1./3,
+#         0.98, 0.01, 0.01,
+#         0.01, 0.01, 0.98
+        
+#     ])
+# print(tn4.nds['HRSAT'].cpt)
+
+
+# tn4.add_edge('ARTCO2', 'EXPCO2')
+# tn4.add_edge('VENTLUNG', 'EXPCO2')
+# tn4.nds['EXPCO2'].cpt=tn4.nds['EXPCO2'].empty_cpt(
+#     ).rename(
+#         {32:'ARTCO2', 30:'VENTLUNG', 15:'EXPCO2'}, axis=1
+#     ).assign(Prob=[
+#         0.97, 0.01, 0.01, 0.01,
+#         0.01, 0.97, 0.01, 0.01,
+#         0.01, 0.01, 0.97, 0.01,
+#         0.01, 0.01, 0.01, 0.97,
+#         0.01, 0.97, 0.01, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.01, 0.01, 0.97, 0.01,
+#         0.01, 0.01, 0.01, 0.97,
+#         0.01, 0.97, 0.01, 0.01,
+#         0.01, 0.01, 0.97, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.01, 0.01, 0.01, 0.97
+#     ])
+# print(tn4.nds['EXPCO2'].cpt)
+
+
+# tn4.add_edge('VENTLUNG', 'MINVOL')
+# tn4.add_edge('INTUBATION', 'MINVOL')
+# tn4.nds['MINVOL'].cpt=tn4.nds['MINVOL'].empty_cpt(
+#     ).rename(
+#         {24:'INTUBATION', 30:'VENTLUNG', 17:'MINVOL'}, axis=1
+#     ).assign(Prob=[
+#         0.97, 0.01, 0.01, 0.01,
+#         0.01, 0.97, 0.01, 0.01,
+#         0.01, 0.01, 0.97, 0.01,
+#         0.01, 0.01, 0.01, 0.97,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.60, 0.38, 0.01, 0.01,
+#         0.50, 0.48, 0.01, 0.01,
+#         0.50, 0.48, 0.01, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.01, 0.97, 0.01, 0.01,
+#         0.01, 0.01, 0.97, 0.01,
+#         0.01, 0.01, 0.01, 0.97,
+       
+#     ])
+# print(tn4.nds['MINVOL'].cpt)
+
+# tn4.add_edge('VENTALV', 'PVSAT')
+# tn4.add_edge('FIO2', 'PVSAT')
+# tn4.nds['PVSAT'].cpt=tn4.nds['PVSAT'].empty_cpt(
+#     ).rename(
+#         {18:'FIO2', 31:'VENTALV', 19:'PVSAT'}, axis=1
+#     ).assign(Prob=[
+#         1.0, 0.0, 0.0,
+#         0.99, 0.01, 0.00,
+#         0.95, 0.04, 0.01,
+#         0.95, 0.04, 0.01,
+#         1.0, 0.0, 0.0,
+#         0.95, 0.04, 0.01,
+#         0.01, 0.95, 0.04,
+#         0.01, 0.01, 0.98
+#     ])
+# print(tn4.nds['PVSAT'].cpt)
+
+# tn4.add_edge('SHUNT', 'SAO2')
+# tn4.add_edge('PVSAT', 'SAO2')
+# tn4.nds['SAO2'].cpt=tn4.nds['SAO2'].empty_cpt(
+#     ).rename(
+#         {19:'PVSAT', 23:'SHUNT', 20:'SAO2'}, axis=1
+#     ).assign(Prob=[
+#         0.98, 0.01, 0.01,
+#         0.01, 0.98, 0.01,
+#         0.01, 0.01, 0.98,
+#         0.98, 0.01, 0.01,
+#         0.98, 0.01, 0.01,
+#         0.69, 0.30, 0.01
+#     ])
+# print(tn4.nds['SAO2'].cpt)
+
+
+
+# tn4.add_edge('VENTTUBE', 'PRESS')
+# tn4.add_edge('KINKEDTUBE', 'PRESS')
+# tn4.add_edge('INTUBATION', 'PRESS')
+# tn4.nds['PRESS'].cpt=tn4.nds['PRESS'].empty_cpt(
+#     ).rename(
+#         {29:'VENTTUBE', 16:'KINKEDTUBE', 24:'INTUBATION', 25:'PRESS'}, axis=1
+#     ).assign(Prob=[
+#         0.97, 0.01, 0.01, 0.01,
+#         0.01, 0.30, 0.49, 0.20,
+#         0.01, 0.01, 0.08, 0.90,
+#         0.01, 0.01, 0.01, 0.97,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.10, 0.84, 0.05, 0.01,
+#         0.05, 0.25, 0.25, 0.45,
+#         0.01, 0.15, 0.25, 0.59,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.01, 0.29, 0.30, 0.40,
+#         0.01, 0.01, 0.08, 0.90,
+#         0.01, 0.01, 0.01, 0.97,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.01, 0.97, 0.01, 0.01,
+#         0.01, 0.01, 0.97, 0.01,
+#         0.01, 0.01, 0.01, 0.97,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.40, 0.58, 0.01, 0.01,
+#         0.20, 0.75, 0.04, 0.01,
+#         0.20, 0.70, 0.09, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.01, 0.90, 0.08, 0.01,
+#         0.01, 0.01, 0.38, 0.60,
+#         0.01, 0.01, 0.01, 0.97
+#     ])
+# print(tn4.nds['PRESS'].cpt)
+
+
+# tn4.add_edge('VENTTUBE', 'VENTLUNG')
+# tn4.add_edge('KINKEDTUBE', 'VENTLUNG')
+# tn4.add_edge('INTUBATION', 'VENTLUNG')
+# tn4.nds['VENTLUNG'].cpt=tn4.nds['VENTLUNG'].empty_cpt(
+#     ).rename(
+#         {29:'VENTTUBE', 16:'KINKEDTUBE', 24:'INTUBATION', 30:'VENTLUNG'}, axis=1
+#     ).assign(Prob=[
+#         0.97, 0.01, 0.01, 0.01,
+#         0.95, 0.03, 0.01, 0.01,
+#         0.40, 0.58, 0.01, 0.01,
+#         0.30, 0.68, 0.01, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.95, 0.03, 0.01, 0.01,
+#         0.50, 0.48, 0.01, 0.01,
+#         0.30, 0.68, 0.01, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.01, 0.97, 0.01, 0.01,
+#         0.01, 0.01, 0.97, 0.01,
+#         0.01, 0.01, 0.01, 0.97,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.01, 0.97, 0.01, 0.01,
+#         0.01, 0.01, 0.97, 0.01,
+#         0.01, 0.01, 0.01, 0.97
+#     ])
+# print(tn4.nds['VENTLUNG'].cpt)
+
+
+# tn4.add_edge('VENTLUNG', 'VENTALV')
+# tn4.add_edge('INTUBATION', 'VENTALV')
+# tn4.nds['VENTALV'].cpt=tn4.nds['VENTALV'].empty_cpt(
+#     ).rename(
+#         {30:'VENTLUNG', 24:'INTUBATION', 31:'VENTALV'}, axis=1
+#     ).assign(Prob=[
+#         0.97, 0.01, 0.01, 0.01,
+#         0.01, 0.97, 0.01, 0.01,
+#         0.01, 0.01, 0.97, 0.01,
+#         0.01, 0.01, 0.01, 0.97,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.01, 0.97, 0.01, 0.01,
+#         0.01, 0.01, 0.97, 0.01,
+#         0.01, 0.01, 0.01, 0.97,
+#         0.97, 0.01, 0.01, 0.01,
+#         0.03, 0.95, 0.01, 0.01,
+#         0.01, 0.94, 0.04, 0.01,
+#         0.01, 0.88, 0.10, 0.01
+#     ])
+# print(tn4.nds['VENTALV'].cpt)
+
+
+# tn4.add_edge('VENTALV', 'ARTCO2')
+# tn4.nds['ARTCO2'].cpt=tn4.nds['ARTCO2'].empty_cpt(
+#     ).rename(
+#         {31:'VENTALV', 32:'ARTCO2'}, axis=1
+#     ).assign(Prob=[
+#         0.01, 0.01, 0.98,
+#         0.01, 0.01, 0.98,
+#         0.04, 0.92, 0.04,
+#         0.90, 0.09, 0.01
+#     ])
+# print(tn4.nds['ARTCO2'].cpt)
+
+
+# tn4.add_edge('TPR', 'CATECHOL')
+# tn4.add_edge('SAO2', 'CATECHOL')
+# tn4.add_edge('INSUFFANESTH', 'CATECHOL')
+# tn4.add_edge('ARTCO2', 'CATECHOL')
+# tn4.nds['CATECHOL'].cpt=tn4.nds['CATECHOL'].empty_cpt(
+#     ).rename(
+#         {14:'TPR', 20:'SAO2', 12:'INSUFFANESTH',32:'ARTCO2', 33:'CATECHOL'}, 
+#         axis=1
+#     ).assign(Prob=[
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.05, 0.95,
+#         0.05, 0.95,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.01, 0.99,
+#         0.05, 0.95,
+#         0.05, 0.95,
+#         0.01, 0.99,
+#         0.05, 0.95,
+#         0.05, 0.95,
+#         0.01, 0.99,
+#         0.05, 0.95,
+#         0.05, 0.95,
+#         0.01, 0.99,
+#         0.05, 0.95,
+#         0.05, 0.95,
+#         0.01, 0.99,
+#         0.05, 0.95,
+#         0.05, 0.95,
+#         0.01, 0.99,
+#         0.7, 0.3,
+#         0.7, 0.3,
+#         0.1, 0.9,
+#         0.7, 0.3,
+#         0.7, 0.3,
+#         0.1, 0.9,
+#         0.7, 0.3,
+#         0.7, 0.3,
+#         0.1, 0.9,
+#         0.95, 0.05,
+#         0.99, 0.01,
+#         0.3, 0.7,
+#         0.95, 0.05,
+#         0.99, 0.01,
+#         0.3, 0.7,
+#         0.95, 0.05,
+#         0.99, 0.01,
+#         0.3, 0.7
+#     ])
+# print(tn4.nds['CATECHOL'].cpt)
+
+# # probability ( HR | CATECHOL ) {
+# #   (NORMAL) 0.05, 0.90, 0.05;
+# #   (HIGH) 0.01, 0.09, 0.90;
+# # }
+# tn4.add_edge('CATECHOL', 'HR')
+# tn4.nds['HR'].cpt=tn4.nds['HR'].empty_cpt(
+#     ).rename(
+#         {33:'CATECHOL', 34:'HR'}, axis=1
+#     ).assign(Prob=[
+#         0.05, 0.90, 0.05,
+#         0.01, 0.09, 0.90
+#     ])
+# print(tn4.nds['HR'].cpt)
+
+
+# tn4.add_edge('STROKEVOLUME', 'CO')
+# tn4.add_edge('HR', 'CO')
+# tn4.nds['CO'].cpt=tn4.nds['CO'].empty_cpt(
+#     ).rename(
+#         {6:'STROKEVOLUME', 34:'HR', 35:'CO'}, axis=1
+#     ).assign(Prob=[
+#         0.98, 0.01, 0.01,
+#         0.95, 0.04, 0.01,
+#         0.80, 0.19, 0.01,
+#         0.95, 0.04, 0.01,
+#         0.04, 0.95, 0.01,
+#         0.01, 0.04, 0.95,
+#         0.30, 0.69, 0.01,
+#         0.01, 0.30, 0.69,
+#         0.01, 0.01, 0.98
+#     ])
+# print(tn4.nds['CO'].cpt)
+
+# tn4.add_edge('TPR', 'BP')
+# tn4.add_edge('CO', 'BP')
+# tn4.nds['BP'].cpt=tn4.nds['BP'].empty_cpt(
+#     ).rename(
+#         {14:'TPR', 35:'CO', 36:'BP'}, axis=1
+#     ).assign(Prob=[
+#         0.98, 0.01, 0.01,
+#         0.95, 0.04, 0.01,
+#         0.80, 0.19, 0.01,
+#         0.95, 0.04, 0.01,
+#         0.04, 0.95, 0.01,
+#         0.01, 0.04, 0.95,
+#         0.30, 0.69, 0.01,
+#         0.01, 0.30, 0.69,
+#         0.01, 0.01, 0.98
+#     ])
+# print(tn4.nds['BP'].cpt)
+
+
+
+x={'A':10, 'B':20, 'C':30}
+y={'D':10, 'E':20, 'F':30}
+
+par=['C', 'E']
+
+[x[i] if i in x.keys() else y[i] for i in par ]
+
+[(i,x[i]) if i in x.keys() else (i,y[i])for i in par ]
+
+{i:x[i] if i in x.keys() else y[i] for i in par }
+
+
+
+
+

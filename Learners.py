@@ -46,10 +46,11 @@ def best_model(X):
     return best_gmm
 
 class greedy():
-    def __init__(self, data):
+    def __init__(self, data, alpha=0.000001):
         if not isinstance(data, pd.DataFrame):
             return None
         else:
+            self.alpha = alpha
             self.data = data.copy()
             self.net = net(data = self.data)
             self.net.calc_cpt(self.data)
@@ -83,7 +84,7 @@ class greedy():
                 f(edge[0], edge[1])
               
             if n.acyclic():
-                n.calc_cpt(self.data, alpha = 0.001)
+                n.calc_cpt(self.data, alpha = self.alpha)
                 score = score_pom(export_pom(n, by='label'), self.data)
                 scores['Iteration'].append(iterations - niter)
                 scores['Network'].append(n)
@@ -106,7 +107,7 @@ class greedy():
 
 
 class CASGMM():
-    def __init__(self, data):
+    def __init__(self, data, alpha=0.000001):
         if not isinstance(data, pd.DataFrame):
             return None
         else:
@@ -114,6 +115,7 @@ class CASGMM():
             self.net = net(data = self.data)
             self.net.calc_cpt(self.data)
             self.scores = {}
+            self.alpha = alpha
             self.mi = self.pop_mi()
             self.E = self.CAS()
             
@@ -180,7 +182,7 @@ class CASGMM():
                 f(edge[0], edge[1])
               
             if n.acyclic():
-                n.calc_cpt(self.data, alpha = 0.001)
+                n.calc_cpt(self.data, alpha = self.alpha)
                 score = score_pom(export_pom(n, by='label'), self.data)
                 scores['Iteration'].append(iterations - niter)
                 scores['Network'].append(n)
@@ -203,13 +205,14 @@ class CASGMM():
 
 
 class CASJNB():
-    def __init__(self, data):
+    def __init__(self, data, alpha=0.000001):
         if not isinstance(data, pd.DataFrame):
             return None
         else:
             self.data = data.copy()
             self.net = net(data = self.data)
             self.net.calc_cpt(self.data)
+            self.alpha = alpha
             self.scores = {}
             self.mi = self.pop_mi()
             self.E = self.CAS()
@@ -273,7 +276,7 @@ class CASJNB():
                 f(edge[0], edge[1])
               
             if n.acyclic():
-                n.calc_cpt(self.data, alpha = 0.001)
+                n.calc_cpt(self.data, alpha = self.alpha)
                 score = score_pom(export_pom(n, by='label'), self.data)
                 scores['Iteration'].append(iterations - niter)
                 scores['Network'].append(n)
@@ -295,8 +298,8 @@ class CASJNB():
         self.scores = scores  
 
 
-class CASGMM_skip():
-    def __init__(self, data):
+class CASMOD():
+    def __init__(self, data, alpha=0.000001):
         if not isinstance(data, pd.DataFrame):
             return None
         else:
@@ -304,6 +307,7 @@ class CASGMM_skip():
             self.net = net(data = self.data)
             self.net.calc_cpt(self.data)
             self.scores = {}
+            self.alpha = alpha
             self.mi = self.pop_mi()
             self.E = self.CAS()
             
@@ -343,7 +347,7 @@ class CASGMM_skip():
                     if m.means_[0] > m.means_[1]:
                         C = m.predict(miv.values.reshape(-1,1))
                         print("Keep 0:", C)
-                        C = [mii[i] for i in range(0,len(C)) if C[i] == 0]
+                        C = [mii[i] for i in range(0,len(C)) sample_net, if C[i] == 0]
                 
                     elif m.means_[0] < m.means_[1]:
                         C = m.predict(miv.values.reshape(-1,1))
