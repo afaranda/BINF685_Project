@@ -239,80 +239,80 @@ tn4.nds['HYPOVOLEMIA'].cpt=tn4.nds['HYPOVOLEMIA'].empty_cpt(
     ).rename(
         {3:'HYPOVOLEMIA'}, axis=1
     ).assign(Prob=[0.2, 0.8])
-print(tn4.nds['HYPOVOLEMIA'].cpt)
+#print(tn4.nds['HYPOVOLEMIA'].cpt)
 
 tn4.nds['LVFAILURE'].cpt=tn4.nds['LVFAILURE'].empty_cpt(
     ).rename(
         {5:'LVFAILURE'}, axis=1
     ).assign(Prob=[0.05, 0.95])
-print(tn4.nds['LVFAILURE'].cpt)
+#print(tn4.nds['LVFAILURE'].cpt)
 
 tn4.nds['ERRLOWOUTPUT'].cpt=tn4.nds['ERRLOWOUTPUT'].empty_cpt(
     ).rename(
         {7:'ERRLOWOUTPUT'}, axis=1
     ).assign(Prob=[0.05, 0.95])
-print(tn4.nds['ERRLOWOUTPUT'].cpt)
+#print(tn4.nds['ERRLOWOUTPUT'].cpt)
 
 tn4.nds['ERRCAUTER'].cpt=tn4.nds['ERRCAUTER'].empty_cpt(
     ).rename(
         {10:'ERRCAUTER'}, axis=1
     ).assign(Prob=[0.1, 0.9])
-print(tn4.nds['ERRCAUTER'].cpt)
+#print(tn4.nds['ERRCAUTER'].cpt)
 
 tn4.nds['INSUFFANESTH'].cpt=tn4.nds['INSUFFANESTH'].empty_cpt(
     ).rename(
         {12:'INSUFFANESTH'}, axis=1
     ).assign(Prob=[0.1, 0.9])
-print(tn4.nds['INSUFFANESTH'].cpt)
+#print(tn4.nds['INSUFFANESTH'].cpt)
 
 tn4.nds['ANAPHYLAXIS'].cpt=tn4.nds['ANAPHYLAXIS'].empty_cpt(
     ).rename(
         {13:'ANAPHYLAXIS'}, axis=1
     ).assign(Prob=[0.01, 0.99])
-print(tn4.nds['ANAPHYLAXIS'].cpt)
+#print(tn4.nds['ANAPHYLAXIS'].cpt)
 
 tn4.nds['KINKEDTUBE'].cpt=tn4.nds['KINKEDTUBE'].empty_cpt(
     ).rename(
         {16:'KINKEDTUBE'}, axis=1
     ).assign(Prob=[0.04, 0.96])
-print(tn4.nds['KINKEDTUBE'].cpt)
+#print(tn4.nds['KINKEDTUBE'].cpt)
 
 tn4.nds['FIO2'].cpt=tn4.nds['FIO2'].empty_cpt(
     ).rename(
         {18:'FIO2'}, axis=1
     ).assign(Prob=[0.05, 0.95])
-print(tn4.nds['FIO2'].cpt)
+#print(tn4.nds['FIO2'].cpt)
 
 tn4.nds['PULMEMBOLUS'].cpt=tn4.nds['PULMEMBOLUS'].empty_cpt(
     ).rename(
         {22:'PULMEMBOLUS'}, axis=1
     ).assign(Prob=[0.01, 0.99])
-print(tn4.nds['PULMEMBOLUS'].cpt)
+#print(tn4.nds['PULMEMBOLUS'].cpt)
 
 tn4.nds['INTUBATION'].cpt=tn4.nds['INTUBATION'].empty_cpt(
     ).rename(
         {24:'INTUBATION'}, axis=1
     ).assign(Prob=[0.92, 0.03, 0.05])
-print(tn4.nds['INTUBATION'].cpt)
+#print(tn4.nds['INTUBATION'].cpt)
 
 tn4.nds['DISCONNECT'].cpt=tn4.nds['DISCONNECT'].empty_cpt(
     ).rename(
         {26:'DISCONNECT'}, axis=1
     ).assign(Prob=[0.1, 0.9])
-print(tn4.nds['DISCONNECT'].cpt)
+#print(tn4.nds['DISCONNECT'].cpt)
 
 tn4.nds['MINVOLSET'].cpt=tn4.nds['MINVOLSET'].empty_cpt(
     ).rename(
         {27:'MINVOLSET'}, axis=1
     ).assign(Prob=[0.05, 0.90, 0.05])
-print(tn4.nds['MINVOLSET'].cpt)
+#print(tn4.nds['MINVOLSET'].cpt)
 
 tn4.add_edge('LVFAILURE', 'HISTORY')
 tn4.nds['HISTORY'].cpt=tn4.nds['HISTORY'].empty_cpt(
     ).rename(
         {5:'LVFAILURE', 0:'HISTORY'}, axis=1
     ).assign(Prob=[0.9, 0.1, 0.01, 0.99])
-print(tn4.nds['HISTORY'].cpt)
+#print(tn4.nds['HISTORY'].cpt)
 
 tn4.add_edge('LVEDVOLUME', 'CVP')
 tn4.nds['CVP'].cpt=tn4.nds['CVP'].empty_cpt(
@@ -323,7 +323,7 @@ tn4.nds['CVP'].cpt=tn4.nds['CVP'].empty_cpt(
         0.04, 0.95, 0.01,
         0.01, 0.29, 0.70
     ])
-print(tn4.nds['CVP'].cpt)
+#print(tn4.nds['CVP'].cpt)
 
 tn4.add_edge('LVEDVOLUME', 'PCWP')
 tn4.nds['PCWP'].cpt=tn4.nds['PCWP'].empty_cpt(
@@ -334,7 +334,7 @@ tn4.nds['PCWP'].cpt=tn4.nds['PCWP'].empty_cpt(
         0.04, 0.95, 0.01,
         0.01, 0.04, 0.95
     ])
-print(tn4.nds['PCWP'].cpt)
+#print(tn4.nds['PCWP'].cpt)
 
 tn4.add_edge('HYPOVOLEMIA', 'LVEDVOLUME')
 tn4.add_edge('LVFAILURE', 'LVEDVOLUME')
@@ -347,7 +347,7 @@ tn4.nds['LVEDVOLUME'].cpt=tn4.nds['LVEDVOLUME'].empty_cpt(
         0.98, 0.01, 0.01,
         0.05, 0.90, 0.05
     ])
-print(tn4.nds['LVEDVOLUME'].cpt)
+#print(tn4.nds['LVEDVOLUME'].cpt)
 
 tn4.add_edge('HYPOVOLEMIA', 'STROKEVOLUME')
 tn4.add_edge('LVFAILURE', 'STROKEVOLUME')
@@ -360,7 +360,7 @@ tn4.nds['STROKEVOLUME'].cpt=tn4.nds['STROKEVOLUME'].empty_cpt(
         0.95, 0.04, 0.01,
         0.05, 0.90, 0.05
     ])
-print(tn4.nds['STROKEVOLUME'].cpt)
+#print(tn4.nds['STROKEVOLUME'].cpt)
 
 tn4.add_edge('ERRLOWOUTPUT', 'HRBP')
 tn4.add_edge('HR', 'HRBP')
@@ -375,7 +375,7 @@ tn4.nds['HRBP'].cpt=tn4.nds['HRBP'].empty_cpt(
         0.98, 0.01, 0.01,
         0.01, 0.01, 0.98
     ])
-print(tn4.nds['HRBP'].cpt)
+#print(tn4.nds['HRBP'].cpt)
 
 tn4.add_edge('ERRCAUTER', 'HREKG')
 tn4.add_edge('HR', 'HREKG')
@@ -391,7 +391,7 @@ tn4.nds['HREKG'].cpt=tn4.nds['HREKG'].empty_cpt(
          0.01, 0.01, 0.98
         
     ])
-print(tn4.nds['HREKG'].cpt)
+#print(tn4.nds['HREKG'].cpt)
 
 tn4.add_edge('ERRCAUTER', 'HRSAT')
 tn4.add_edge('HR', 'HRSAT')
@@ -407,7 +407,7 @@ tn4.nds['HRSAT'].cpt=tn4.nds['HRSAT'].empty_cpt(
         0.01, 0.01, 0.98
         
     ])
-print(tn4.nds['HRSAT'].cpt)
+#print(tn4.nds['HRSAT'].cpt)
 
 tn4.add_edge('ANAPHYLAXIS', 'TPR')
 tn4.nds['TPR'].cpt=tn4.nds['TPR'].empty_cpt(
@@ -417,7 +417,7 @@ tn4.nds['TPR'].cpt=tn4.nds['TPR'].empty_cpt(
         0.98, 0.01, 0.01,
         0.3, 0.4, 0.3
     ])
-print(tn4.nds['TPR'].cpt)
+#print(tn4.nds['TPR'].cpt)
 
 tn4.add_edge('ARTCO2', 'EXPCO2')
 tn4.add_edge('VENTLUNG', 'EXPCO2')
@@ -438,7 +438,7 @@ tn4.nds['EXPCO2'].cpt=tn4.nds['EXPCO2'].empty_cpt(
         0.97, 0.01, 0.01, 0.01,
         0.01, 0.01, 0.01, 0.97
     ])
-print(tn4.nds['EXPCO2'].cpt)
+#print(tn4.nds['EXPCO2'].cpt)
 
 
 tn4.add_edge('VENTLUNG', 'MINVOL')
@@ -462,7 +462,7 @@ tn4.nds['MINVOL'].cpt=tn4.nds['MINVOL'].empty_cpt(
         0.01, 0.01, 0.01, 0.97,
        
     ])
-print(tn4.nds['MINVOL'].cpt)
+#print(tn4.nds['MINVOL'].cpt)
 
 tn4.add_edge('VENTALV', 'PVSAT')
 tn4.add_edge('FIO2', 'PVSAT')
@@ -479,7 +479,7 @@ tn4.nds['PVSAT'].cpt=tn4.nds['PVSAT'].empty_cpt(
         0.01, 0.95, 0.04,
         0.01, 0.01, 0.98
     ])
-print(tn4.nds['PVSAT'].cpt)
+#print(tn4.nds['PVSAT'].cpt)
 
 tn4.add_edge('SHUNT', 'SAO2')
 tn4.add_edge('PVSAT', 'SAO2')
@@ -494,7 +494,7 @@ tn4.nds['SAO2'].cpt=tn4.nds['SAO2'].empty_cpt(
         0.98, 0.01, 0.01,
         0.69, 0.30, 0.01
     ])
-print(tn4.nds['SAO2'].cpt)
+#print(tn4.nds['SAO2'].cpt)
 
 tn4.add_edge('PULMEMBOLUS', 'PAP')
 tn4.nds['PAP'].cpt=tn4.nds['PAP'].empty_cpt(
@@ -504,7 +504,7 @@ tn4.nds['PAP'].cpt=tn4.nds['PAP'].empty_cpt(
         0.01, 0.19, 0.80,
         0.05, 0.90, 0.05
     ])
-print(tn4.nds['PAP'].cpt)
+#print(tn4.nds['PAP'].cpt)
 
 tn4.add_edge('PULMEMBOLUS', 'SHUNT')
 tn4.add_edge('INTUBATION', 'SHUNT')
@@ -519,7 +519,7 @@ tn4.nds['SHUNT'].cpt=tn4.nds['SHUNT'].empty_cpt(
         0.95, 0.05,
         0.05, 0.95
     ])
-print(tn4.nds['SHUNT'].cpt)
+#print(tn4.nds['SHUNT'].cpt)
 
 
 tn4.add_edge('VENTTUBE', 'PRESS')
@@ -554,7 +554,7 @@ tn4.nds['PRESS'].cpt=tn4.nds['PRESS'].empty_cpt(
         0.01, 0.01, 0.38, 0.60,
         0.01, 0.01, 0.01, 0.97
     ])
-print(tn4.nds['PRESS'].cpt)
+#print(tn4.nds['PRESS'].cpt)
 
 tn4.add_edge('MINVOLSET', 'VENTMACH')
 tn4.nds['VENTMACH'].cpt=tn4.nds['VENTMACH'].empty_cpt(
@@ -565,7 +565,7 @@ tn4.nds['VENTMACH'].cpt=tn4.nds['VENTMACH'].empty_cpt(
         0.05, 0.01, 0.93, 0.01,
         0.05, 0.01, 0.01, 0.93
     ])
-print(tn4.nds['VENTMACH'].cpt)
+#print(tn4.nds['VENTMACH'].cpt)
 
 
 tn4.add_edge('VENTMACH', 'VENTTUBE')
@@ -583,7 +583,7 @@ tn4.nds['VENTTUBE'].cpt=tn4.nds['VENTTUBE'].empty_cpt(
         0.01, 0.01, 0.97, 0.01,
         0.01, 0.01, 0.01, 0.97
     ])
-print(tn4.nds['VENTTUBE'].cpt)
+#print(tn4.nds['VENTTUBE'].cpt)
 
 tn4.add_edge('VENTTUBE', 'VENTLUNG')
 tn4.add_edge('KINKEDTUBE', 'VENTLUNG')
@@ -617,7 +617,7 @@ tn4.nds['VENTLUNG'].cpt=tn4.nds['VENTLUNG'].empty_cpt(
         0.01, 0.01, 0.97, 0.01,
         0.01, 0.01, 0.01, 0.97
     ])
-print(tn4.nds['VENTLUNG'].cpt)
+#print(tn4.nds['VENTLUNG'].cpt)
 
 
 tn4.add_edge('VENTLUNG', 'VENTALV')
@@ -639,7 +639,7 @@ tn4.nds['VENTALV'].cpt=tn4.nds['VENTALV'].empty_cpt(
         0.01, 0.94, 0.04, 0.01,
         0.01, 0.88, 0.10, 0.01
     ])
-print(tn4.nds['VENTALV'].cpt)
+#print(tn4.nds['VENTALV'].cpt)
 
 
 tn4.add_edge('VENTALV', 'ARTCO2')
@@ -652,7 +652,7 @@ tn4.nds['ARTCO2'].cpt=tn4.nds['ARTCO2'].empty_cpt(
         0.04, 0.92, 0.04,
         0.90, 0.09, 0.01
     ])
-print(tn4.nds['ARTCO2'].cpt)
+#print(tn4.nds['ARTCO2'].cpt)
 
 
 tn4.add_edge('TPR', 'CATECHOL')
@@ -719,7 +719,7 @@ tn4.nds['CATECHOL'].cpt=tn4.nds['CATECHOL'].empty_cpt(
         0.99, 0.01,
         0.3, 0.7
     ])
-print(tn4.nds['CATECHOL'].cpt)
+#print(tn4.nds['CATECHOL'].cpt)
 
 # probability ( HR | CATECHOL ) {
 #   (NORMAL) 0.05, 0.90, 0.05;
@@ -733,7 +733,7 @@ tn4.nds['HR'].cpt=tn4.nds['HR'].empty_cpt(
         0.05, 0.90, 0.05,
         0.01, 0.09, 0.90
     ])
-print(tn4.nds['HR'].cpt)
+#print(tn4.nds['HR'].cpt)
 
 
 tn4.add_edge('STROKEVOLUME', 'CO')
@@ -752,7 +752,7 @@ tn4.nds['CO'].cpt=tn4.nds['CO'].empty_cpt(
         0.01, 0.30, 0.69,
         0.01, 0.01, 0.98
     ])
-print(tn4.nds['CO'].cpt)
+#print(tn4.nds['CO'].cpt)
 
 tn4.add_edge('TPR', 'BP')
 tn4.add_edge('CO', 'BP')
@@ -770,7 +770,7 @@ tn4.nds['BP'].cpt=tn4.nds['BP'].empty_cpt(
         0.01, 0.30, 0.69,
         0.01, 0.01, 0.98
     ])
-print(tn4.nds['BP'].cpt)
+#print(tn4.nds['BP'].cpt)
 ds4=sample_net(tn4, 1000)
 
 

@@ -572,7 +572,7 @@ class net:
 
         
     def add_edge(self, p_idx, c_idx):
-        print("parent:", p_idx, "child:", c_idx)
+        # print("parent:", p_idx, "child:", c_idx)
         if p_idx != c_idx:
             self.nds[c_idx].add_parents([self.nds[p_idx]])
         

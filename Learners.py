@@ -55,7 +55,7 @@ class greedy():
             self.net = net(data = self.data)
             self.net.calc_cpt(self.data)
             self.scores = {}
-            print(self.net.nds.keys())
+            #print(self.net.nds.keys())
             
     def train(self, iterations = 10, maxmiss=10):
         """
@@ -139,15 +139,15 @@ class CASGMM():
             m = best_model(miv.values.reshape(-1,1))
             
             if m.n_components > 1:
-                print("Split", v)
+                #print("Split", v)
                 if m.means_[0] > m.means_[1]:
                     C = m.predict(miv.values.reshape(-1,1))
-                    print("Keep 0:", C)
+                    #print("Keep 0:", C)
                     C = [mii[i] for i in range(0,len(C)) if C[i] == 0]
             
                 elif m.means_[0] < m.means_[1]:
                     C = m.predict(miv.values.reshape(-1,1))
-                    print("Keep 1:",C)
+                    #print("Keep 1:",C)
                     C = [mii[i] for i in range(0,len(C)) if C[i] == 1]
          
             for c in C:
@@ -343,15 +343,15 @@ class CASMOD():
                 m = best_model(miv.values.reshape(-1,1))
             
                 if m.n_components > 1:
-                    print("Split", v)
+                    # print("Split", v)
                     if m.means_[0] > m.means_[1]:
                         C = m.predict(miv.values.reshape(-1,1))
-                        print("Keep 0:", C)
+                        # print("Keep 0:", C)
                         C = [mii[i] for i in range(0,len(C)) if C[i] == 0]
                 
                     elif m.means_[0] < m.means_[1]:
                         C = m.predict(miv.values.reshape(-1,1))
-                        print("Keep 1:",C)
+                        # print("Keep 1:",C)
                         C = [mii[i] for i in range(0,len(C)) if C[i] == 1]
              
                 for c in C:

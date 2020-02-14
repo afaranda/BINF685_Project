@@ -176,7 +176,7 @@ def accuracy(net, data):
     res = {}
     m = export_pom(net, by=net.by)
     for c in data.columns:
-        print(c)
+        #print(c)
         res[c] = ac(pred_mult(m, data, c))
     return res
     
@@ -185,7 +185,7 @@ def sensetivity(net, data):
     res = {}
     m = export_pom(net, by=net.by)
     for c in data.columns:
-        print(pred_bin(m, data, c))
+        #print(pred_bin(m, data, c))
         res[c] = sn(pred_bin(m, data, c))
     return res
     
@@ -193,7 +193,7 @@ def specificity(net, data):
     res = {}
     m = export_pom(net, by=net.by)
     for c in data.columns:
-        print(c)
+        #print(c)
         res[c] = sp(pred_bin(m, data, c))
     return res
     
