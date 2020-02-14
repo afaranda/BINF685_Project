@@ -1,14 +1,15 @@
 #!/bin/bash
-#SBATCH --job-name=BLASTrun
+#SBATCH --job-name=Bayes
 #SBATCH --ntasks=8
-#SBATCH --mem=16000
+#SBATCH --mem=64000
 
 
 # Run HW2 Bayes Net as a slurm job
-python3 main.py > result_summary.txt
+export fn=$(echo $1 | sed 's/_Analysis\.py/_out.txt')
+python3 $1 > ${fn}
 
 # Plot Training Results
-R CMD BATCH Plot_Train.R
+#R CMD BATCH Plot_Train.R
 
 
 
