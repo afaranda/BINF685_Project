@@ -65,7 +65,7 @@ class greedy():
         
         scores = {
             'Iteration':[],
-            'Network':[],
+            #'Network':[],
             'Score':[]
         }
         score_check = maxmiss
@@ -87,7 +87,7 @@ class greedy():
                 n.calc_cpt(self.data, alpha = self.alpha)
                 score = score_pom(export_pom(n, by='label'), self.data)
                 scores['Iteration'].append(iterations - niter)
-                scores['Network'].append(n)
+                #scores['Network'].append(n)
                 scores['Score'].append(score)
                 #print(best, score, niter, score_check)
                 if score > best:
@@ -164,7 +164,7 @@ class CASGMM():
         
         scores = {
             'Iteration':[],
-            'Network':[],
+            #'Network':[],
             'Score':[]
         }
         score_check = maxmiss
@@ -185,7 +185,7 @@ class CASGMM():
                 n.calc_cpt(self.data, alpha = self.alpha)
                 score = score_pom(export_pom(n, by='label'), self.data)
                 scores['Iteration'].append(iterations - niter)
-                scores['Network'].append(n)
+                #scores['Network'].append(n)
                 scores['Score'].append(score)
                 #print(best, score, niter, score_check)
                 if score > best:
@@ -258,7 +258,7 @@ class CASJNB():
         
         scores = {
             'Iteration':[],
-            'Network':[],
+            #'Network':[],
             'Score':[]
         }
         score_check = maxmiss
@@ -279,7 +279,7 @@ class CASJNB():
                 n.calc_cpt(self.data, alpha = self.alpha)
                 score = score_pom(export_pom(n, by='label'), self.data)
                 scores['Iteration'].append(iterations - niter)
-                scores['Network'].append(n)
+                #scores['Network'].append(n)
                 scores['Score'].append(score)
                 #print(best, score, niter, score_check)
                 if score > best:
@@ -347,7 +347,7 @@ class CASMOD():
                     if m.means_[0] > m.means_[1]:
                         C = m.predict(miv.values.reshape(-1,1))
                         print("Keep 0:", C)
-                        C = [mii[i] for i in range(0,len(C)) sample_net, if C[i] == 0]
+                        C = [mii[i] for i in range(0,len(C)) if C[i] == 0]
                 
                     elif m.means_[0] < m.means_[1]:
                         C = m.predict(miv.values.reshape(-1,1))
@@ -368,7 +368,7 @@ class CASMOD():
         
         scores = {
             'Iteration':[],
-            'Network':[],
+            #'Network':[],
             'Score':[]
         }
         score_check = maxmiss
@@ -389,7 +389,7 @@ class CASMOD():
                 n.calc_cpt(self.data, alpha = 0.001)
                 score = score_pom(export_pom(n, by='label'), self.data)
                 scores['Iteration'].append(iterations - niter)
-                scores['Network'].append(n)
+                #scores['Network'].append(n)
                 scores['Score'].append(score)
                 #print(best, score, niter, score_check)
                 if score > best:
@@ -411,7 +411,7 @@ class CASMOD():
 
 
 class greedy_nmi_weighted():
-    def __init__(self, data):
+    def __init__(self, data, alpha=0.000001):
         if not isinstance(data, pd.DataFrame):
             return None
         else:
@@ -420,6 +420,7 @@ class greedy_nmi_weighted():
             self.net.calc_cpt(self.data)
             self.scores = {}
             self.mi_weights = {}
+            self.alpha = alpha
             print(self.net.nds.keys())
             self.calc_norm_mi_Weights()
     def calc_norm_mi_Weights(self):
@@ -465,7 +466,7 @@ class greedy_nmi_weighted():
                   f(v1, v2)
                   
             if n.acyclic():
-                n.calc_cpt(self.data, alpha = 0.001)
+                n.calc_cpt(self.data, alpha = self.alpha)
                 score = score_pom(export_pom(n, by='label'), self.data)
                 scores['Iteration'].append(iterations - niter)
                 scores['Network'].append(n)

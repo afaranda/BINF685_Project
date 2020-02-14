@@ -64,7 +64,7 @@ def dpf2(x, y, p=1, q=1):
 
 # Data Set 1: 20 independent variables, 1000 samples with frequencies
 # In descending order
-nobs=5100
+nobs=600
 ds1 = pd.DataFrame(columns = ['G'+str(i) for i in range(0,20)])
 for i in range(1,21):
     ds1['G'+str(i-1)]=choice([0,1],size=nobs, p=[i/21, 1-(i/21)])
@@ -772,9 +772,6 @@ tn4.nds['BP'].cpt=tn4.nds['BP'].empty_cpt(
     ])
 print(tn4.nds['BP'].cpt)
 ds4=sample_net(tn4, 1000)
-
-for c in ds4.columns:
-    ds4[c]=ds4[c].astype('category')
 
 
 

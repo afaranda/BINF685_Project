@@ -127,7 +127,7 @@ def call_bin(o, p):
             
 def pred_bin(net, data, var):
     d = data.copy()
-    m = export_pom(net, by=net.by)
+    m = net
     v = [i.name for i in m.states]
     ix = [i for i in range(0, len(v)) if v[i] == var]
     #score = {'TP':0, 'FP':0, 'TN':0, 'FN':0}
@@ -152,9 +152,8 @@ def call_mult(o, p):
     else:
         return 'FN'
     
-def pred_mult(net, data, var):
+def pred_mult(m, data, var):
     d = data.copy()
-    m = export_pom(net, by=net.by)
     v = [i.name for i in m.states]
     ix = [i for i in range(0, len(v)) if v[i] == var]
     #score = {'TP':0, 'FP':0, 'TN':0, 'FN':0}
@@ -175,12 +174,28 @@ def pred_mult(net, data, var):
 
 def accuracy(net, data):
     res = {}
+    m = export_pom(net, by=net.by)
     for c in data.columns:
-        res[c] = ac(pred_mult(net, data, c))
-
+        print(c)
+        res[c] = ac(pred_mult(m, data, c))
+    return res
     
     
+def sensetivity(net, data):
+    res = {}
+    m = export_pom(net, by=net.by)
+    for c in data.columns:
+        print(pred_bin(m, data, c))
+        res[c] = sn(pred_bin(m, data, c))
+    return res
     
+def specificity(net, data):
+    res = {}
+    m = export_pom(net, by=net.by)
+    for c in data.columns:
+        print(c)
+        res[c] = sp(pred_bin(m, data, c))
+    return res
     
     
     
