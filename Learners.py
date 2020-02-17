@@ -8,6 +8,7 @@ Created on Wed Jan  8 12:51:42 2020
 import pandas as pd
 import numpy as np
 import random as rn
+from copy import deepcopy as dc
 from sklearn.metrics import mutual_info_score as mi
 from sklearn.mixture import GaussianMixture as gm
 from jenkspy import jenks_breaks
@@ -75,16 +76,22 @@ class greedy():
         
         #print("START LOOP")
         while score_check > 0 and niter > 0:
-            n = net(data = self.data)
-            n.import_dag(self.net.export_dag())
-            
+            n = dc(self.net)
+            upd = set()
             ops = [n.add_edge, n.del_edge, n.rev_edge]
             for f in ops:
                 edge = np.random.choice(nodes, size = 2, replace=False)
                 f(edge[0], edge[1])
-              
+                upd.add(edge[0])
+                upd.add(edge[1])
+                
             if n.acyclic():
-                n.calc_cpt(self.data, alpha = self.alpha)
+                n.calc_cpt(
+                    self.data, 
+                    alpha = self.alpha, 
+                    change=upd
+                )
+
                 score = score_pom(export_pom(n, by='label'), self.data)
                 scores['Iteration'].append(iterations - niter)
                 #scores['Network'].append(n)
@@ -104,7 +111,6 @@ class greedy():
                 niter = niter - 1
                 continue
         self.scores = scores
-
 
 class CASGMM():
     def __init__(self, data, alpha=0.000001):
@@ -173,16 +179,22 @@ class CASGMM():
         
         #print("START LOOP")
         while score_check > 0 and niter > 0:
-            n = net(data = self.data)
-            n.import_dag(self.net.export_dag())
+            n = dc(self.net)
+            upd = set()
             
             ops = [n.add_edge, n.del_edge, n.rev_edge]
             for f in ops:
                 edge = rn.sample(self.E,1)[0]
                 f(edge[0], edge[1])
+                upd.add(edge[0])
+                upd.add(edge[1])
               
             if n.acyclic():
-                n.calc_cpt(self.data, alpha = self.alpha)
+                n.calc_cpt(
+                    self.data, 
+                    alpha = self.alpha, 
+                    change = upd
+                )
                 score = score_pom(export_pom(n, by='label'), self.data)
                 scores['Iteration'].append(iterations - niter)
                 #scores['Network'].append(n)
@@ -267,16 +279,22 @@ class CASJNB():
         
         #print("START LOOP")
         while score_check > 0 and niter > 0:
-            n = net(data = self.data)
-            n.import_dag(self.net.export_dag())
+            n = dc(self.net)
+            upd=set()
             
             ops = [n.add_edge, n.del_edge, n.rev_edge]
             for f in ops:
                 edge = rn.sample(self.E,1)[0]
                 f(edge[0], edge[1])
+                upd.add(edge[0])
+                upd.add(edge[1])
               
             if n.acyclic():
-                n.calc_cpt(self.data, alpha = self.alpha)
+                n.calc_cpt(
+                    self.data, 
+                    alpha = self.alpha, 
+                    change=upd
+                )
                 score = score_pom(export_pom(n, by='label'), self.data)
                 scores['Iteration'].append(iterations - niter)
                 #scores['Network'].append(n)
@@ -377,16 +395,22 @@ class CASMOD():
         
         #print("START LOOP")
         while score_check > 0 and niter > 0:
-            n = net(data = self.data)
-            n.import_dag(self.net.export_dag())
+            n = dc(self.net)
+            upd = set()
             
             ops = [n.add_edge, n.del_edge, n.rev_edge]
             for f in ops:
                 edge = rn.sample(self.E,1)[0]
                 f(edge[0], edge[1])
+                upd.add(edge[0])
+                upd.add(edge[1])
               
             if n.acyclic():
-                n.calc_cpt(self.data, alpha = 0.001)
+                n.calc_cpt(
+                    self.data, 
+                    alpha = self.alpha, 
+                    change = upd
+                )
                 score = score_pom(export_pom(n, by='label'), self.data)
                 scores['Iteration'].append(iterations - niter)
                 #scores['Network'].append(n)

@@ -7,8 +7,9 @@ from generate_networks import tn2, ds2
 
 # Define the number of iterations learn on, and maximum number of sequential
 # misses
-niter = 10
-maxm = 5
+niter = 50
+maxm = 15
+resdir ='results1'
 
 ### Run Learners on Network #2: 5 independent groups -- expect clusters
 print("Net: ds2")
@@ -173,15 +174,15 @@ for i in range(1, 6):
                 
     )
     
-plot_net(tn2, filename='results/TRUTH_ds2.png')
-plot_net(grd.net, filename="results/GREEDY_ds2.png")
-plot_net(cgm.net, filename="results/CASGMM_ds2.png")
-plot_net(cmd.net, filename="results/CASMOD_ds2.png")
-plot_net(cjn.net, filename="results/CASJNK_ds2.png")
+plot_net(tn2, filename=resdir +'/TRUTH_ds2.png')
+plot_net(grd.net, filename= resdir +"/GREEDY_ds2.png")
+plot_net(cgm.net, filename= resdir + "/CASGMM_ds2.png")
+plot_net(cmd.net, filename= resdir + "/CASMOD_ds2.png")
+plot_net(cjn.net, filename= resdir + "/CASJNK_ds2.png")
 
-t_res.to_csv("results/Training_Results.csv", index=False)
-g_res.to_csv("results/Graph_Results.csv", index=False)
-ds2_acc.to_csv("results/ds2_accuracy.csv", index=False)
+t_res.to_csv(resdir + "/ds2_Training_Results.csv", index=False)
+g_res.to_csv(resdir + "/ds2_Graph_Results.csv", index=False)
+ds2_acc.to_csv(resdir + "/ds2_accuracy.csv", index=False)
 
 
 

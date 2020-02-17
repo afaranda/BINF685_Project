@@ -9,11 +9,12 @@ from generate_networks import tn1, ds1
 # misses
 niter = 10
 maxm = 5
+resdir = 'results1'
 
 ### Run Learners on Network #1: 20 independent nodes -- expect no networks
 print("Net: ds1")
-print("Iterations:",niter)
-print("Max Miss:",maxm)
+print("Iterations:", niter)
+print("Max Miss:", maxm)
 
 t_res=pd.DataFrame(
     columns=['Iteration','Score','Trial','Learner','Net']
@@ -173,12 +174,12 @@ for i in range(1, 6):
                 
     )
 
-plot_net(tn1, filename='results/TRUTH_ds1.png')
-plot_net(grd.net, filename="results/GREEDY_ds1.png")
-plot_net(cgm.net, filename="results/CASGMM_ds1.png")
-plot_net(cmd.net, filename="results/CASMOD_ds1.png")
-plot_net(cjn.net, filename="results/CASJNK_ds1.png")
+plot_net(tn1, filename= resdir + '/TRUTH_ds1.png')
+plot_net(grd.net, filename= resdir + "/GREEDY_ds1.png")
+plot_net(cgm.net, filename= resdir + "/CASGMM_ds1.png")
+plot_net(cmd.net, filename= resdir + "/CASMOD_ds1.png")
+plot_net(cjn.net, filename= resdir + "/CASJNK_ds1.png")
 
-t_res.to_csv("results/Training_Results.csv", index=False)
-g_res.to_csv("results/Graph_Results.csv", index=False)
-ds1_acc.to_csv("results/ds1_accuracy.csv", index=False)
+t_res.to_csv(resdir + "/ds1_Training_Results.csv", index=False)
+g_res.to_csv(resdir + "/ds1_Graph_Results.csv", index=False)
+ds1_acc.to_csv(resdir + "/ds1_accuracy.csv", index=False)

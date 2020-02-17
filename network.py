@@ -209,7 +209,6 @@ def export_pom(net, by='index'):
 
             
         model.add_state(state)
-
     
     # Convert Depent Nodes to Conditional Distributions
     dep = [i for i in s if len(i.par) != 0]
@@ -524,9 +523,10 @@ class node:
 
         
 class net:
-    def __init__(self, size=None, outcomes=None, data=None):
+    def __init__(self, size=None, outcomes=None, data=None, maxpar=6):
         self.siz = None
         self.nds = {}
+        self.maxpar=maxpar
         self.by =None
         
         if not (size == None and outcomes == None) and data == None:
@@ -570,9 +570,11 @@ class net:
                 outcomes = self.nds[i].ocm
             )
 
-        
     def add_edge(self, p_idx, c_idx):
         # print("parent:", p_idx, "child:", c_idx)
+        if len(self.nds[c_idx].par) == self.maxpar:
+            return 
+        
         if p_idx != c_idx:
             self.nds[c_idx].add_parents([self.nds[p_idx]])
         
@@ -587,15 +589,22 @@ class net:
     def acyclic(self):
         return not val(self.nds)
           
-    def calc_cpt(self, data, alpha=0.001):
+    def calc_cpt(self, data, alpha=0.001, change=None):
         """
         Calculate CPT probabilities for all nodes in the
         network given the data. If dolumn names in the data do not match
         the index, invoke with: " by='label' " to 
         """
-        for k in self.nds.keys():
-            n = self.nds[k]
-            n.node_probs(data = data, alpha = alpha, by=self.by)
+        if not change:
+            for k in self.nds.keys():
+                n = self.nds[k]
+                n.node_probs(data = data, alpha = alpha, by=self.by)
+        else:
+            for k in change:
+                n = self.nds[k]
+                n.node_probs(data = data, alpha = alpha, by=self.by)
+                
+            
              
     def export_nds(self):
         return list(self.nds.values())

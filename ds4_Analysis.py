@@ -1,7 +1,7 @@
 import pandas as pd
 from Learners import greedy, CASGMM, CASMOD, CASJNB
-from Metrics import kldv, accuracy, edge_hits
-from network import net, export_pom, plot_net
+from Metrics import accuracy, edge_hits
+from network import export_pom, plot_net
 from generate_networks import tn4, ds4
 
 
@@ -9,6 +9,7 @@ from generate_networks import tn4, ds4
 # misses
 niter = 10
 maxm = 5
+resdir = 'results1'
 
 ### Run Learners on Network #4: The 'Alarm' network.
 print("Net: ds4")
@@ -172,15 +173,15 @@ for i in range(1, 6):
         sort=False
                 
     )
-plot_net(tn4, filename='TRUTH_ds4.png')
-plot_net(grd.net, filename="results/GREEDY_ds4.png")
-plot_net(cgm.net, filename="results/CASGMM_ds4.png")
-plot_net(cmd.net, filename="results/CASMOD_ds4.png")
-plot_net(cjn.net, filename="results/CASJNK_ds4.png")
+plot_net(tn4, filename= resdir + '/TRUTH_ds4.png')
+plot_net(grd.net, filename= resdir + "/GREEDY_ds4.png")
+plot_net(cgm.net, filename= resdir + "/CASGMM_ds4.png")
+plot_net(cmd.net, filename= resdir + "/CASMOD_ds4.png")
+plot_net(cjn.net, filename= resdir + "/CASJNK_ds4.png")
 
-t_res.to_csv("results/Training_Results.csv", index=False)
-g_res.to_csv("results/Graph_Results.csv", index=False)
-ds4_acc.to_csv("results/ds4_accuracy.csv", index=False)
+t_res.to_csv(resdir + "/ds4_Training_Results.csv", index=False)
+g_res.to_csv(resdir + "/ds4_Graph_Results.csv", index=False)
+ds4_acc.to_csv(resdir + "/ds4_accuracy.csv", index=False)
 
 
   
