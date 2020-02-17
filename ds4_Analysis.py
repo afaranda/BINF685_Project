@@ -7,9 +7,9 @@ from generate_networks import tn4, ds4
 
 # Define the number of iterations learn on, and maximum number of sequential
 # misses
-niter = 10
-maxm = 5
-resdir = 'results1'
+niter=10
+maxm=5
+resdir='results1'
 
 ### Run Learners on Network #4: The 'Alarm' network.
 print("Net: ds4")

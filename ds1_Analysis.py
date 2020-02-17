@@ -7,9 +7,9 @@ from generate_networks import tn1, ds1
 
 # Define the number of iterations learn on, and maximum number of sequential
 # misses
-niter = 10
-maxm = 5
-resdir = 'results1'
+niter=10
+maxm=5
+resdir='results1'
 
 ### Run Learners on Network #1: 20 independent nodes -- expect no networks
 print("Net: ds1")
