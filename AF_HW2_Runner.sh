@@ -5,8 +5,9 @@
 
 
 # Run HW2 Bayes Net as a slurm job
-export resdir=results1
-export fn=$(echo $1 | sed 's/_Analysis\.py/_out.txt')
+export resdir=results2
+export fn=$(echo $1 | sed 's/_Analysis\.py/_out.txt/')
+echo "python3 $1 > ${resdir}/${fn}"
 python3 $1 > ${resdir}/${fn}
 
 # Plot Training Results

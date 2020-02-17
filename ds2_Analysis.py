@@ -7,9 +7,9 @@ from generate_networks import tn2, ds2
 
 # Define the number of iterations learn on, and maximum number of sequential
 # misses
-niter=10
-maxm=5
-resdir='results1'
+niter=50
+maxm=10
+resdir='results2'
 
 ### Run Learners on Network #2: 5 independent groups -- expect clusters
 print("Net: ds2")
