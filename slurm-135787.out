@@ -1,0 +1,2 @@
+sed: -e expression #1, char 24: unterminated `s' command
+/var/spool/slurm/slurmd/job135787/slurm_script: line 10: results2/: Is a directory
