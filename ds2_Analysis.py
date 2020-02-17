@@ -68,7 +68,7 @@ for i in range(1, 6):
             i[0]:[i[1]]  
             for i in edge_hits(
                 export_pom(grd.net, by='label'),
-                export_pom(tn1, by='label')
+                export_pom(tn2, by='label')
                 ).items()
             }
             ).assign(Trial = i, Learner = 'GREEDY', Net="ds2"),
