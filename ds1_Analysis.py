@@ -124,7 +124,7 @@ for i in range(1, 6):
             i[0]:[i[1]]  
             for i in accuracy(
                 cjn.net,
-                ds1.loc[500:599]
+                ds1.loc[500:519]
                 ).items()
             }
             ).assign(Trial = i, Learner = 'GREEDY', Net="ds1"),
@@ -138,7 +138,7 @@ for i in range(1, 6):
             i[0]:[i[1]]  
             for i in accuracy(
                 cgm.net,
-                ds1.loc[500:599]
+                ds1.loc[500:519]
                 ).items()
             }
             ).assign(Trial = i, Learner = 'CASGMM', Net="ds1"),
@@ -152,7 +152,7 @@ for i in range(1, 6):
             i[0]:[i[1]]  
             for i in accuracy(
                 cmd.net,
-                ds1.loc[500:599]
+                ds1.loc[500:519]
                 ).items()
             }
             ).assign(Trial = i, Learner = 'CASMOD', Net="ds1"),
@@ -166,7 +166,7 @@ for i in range(1, 6):
             i[0]:[i[1]]  
             for i in accuracy(
                 cjn.net,
-                ds1.loc[500:599]
+                ds1.loc[500:519]
                 ).items()
             }
             ).assign(Trial = i, Learner = 'CASJNK', Net="ds1"),

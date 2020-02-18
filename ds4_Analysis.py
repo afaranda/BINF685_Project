@@ -1,15 +1,16 @@
 import pandas as pd
 from Learners import greedy, CASGMM, CASMOD, CASJNB
 from Metrics import accuracy, edge_hits
-from network import export_pom, plot_net
+from network import net, export_pom, plot_net
 from generate_networks import tn4, ds4
 
 
 # Define the number of iterations learn on, and maximum number of sequential
 # misses
-niter=50
-maxm=10
-resdir='results2'
+niter=150
+maxm=25
+resdir='results3'
+
 
 ### Run Learners on Network #4: The 'Alarm' network.
 print("Net: ds4")
@@ -30,18 +31,23 @@ ds4_acc=pd.DataFrame(
 
 for i in range(1, 6):
     print('Trial:', i)
+    print('greedy')
     grd = greedy(ds4.loc[0:499])
     grd.train(iterations=niter, maxmiss=maxm)
     
+    print('CASGMM')
     cgm = CASGMM(ds4.loc[0:499])
     cgm.train(iterations=niter, maxmiss=maxm)
     
+    print('CASMOD')
     cmd = CASMOD(ds4.loc[0:499])
     cmd.train(iterations=niter, maxmiss=maxm)
     
+    print('CASJNB')
     cjn = CASJNB(ds4.loc[0:499])
     cjn.train(iterations=niter, maxmiss=maxm)
     
+    print('Scoring')
     t_res = t_res.append(
         pd.DataFrame(
             grd.scores).assign(Trial = i, Learner = 'GREEDY', Net="ds4")
@@ -124,7 +130,7 @@ for i in range(1, 6):
             i[0]:[i[1]]  
             for i in accuracy(
                 cjn.net,
-                ds4.loc[500:599]
+                ds4.loc[500:519]
                 ).items()
             }
             ).assign(Trial = i, Learner = 'GREEDY', Net="ds4"),
@@ -138,7 +144,7 @@ for i in range(1, 6):
             i[0]:[i[1]]  
             for i in accuracy(
                 cgm.net,
-                ds4.loc[500:599]
+                ds4.loc[500:519]
                 ).items()
             }
             ).assign(Trial = i, Learner = 'CASGMM', Net="ds4"),
@@ -152,7 +158,7 @@ for i in range(1, 6):
             i[0]:[i[1]]  
             for i in accuracy(
                 cmd.net,
-                ds4.loc[500:599]
+                ds4.loc[500:519]
                 ).items()
             }
             ).assign(Trial = i, Learner = 'CASMOD', Net="ds4"),
@@ -166,13 +172,18 @@ for i in range(1, 6):
             i[0]:[i[1]]  
             for i in accuracy(
                 cjn.net,
-                ds4.loc[500:599]
+                ds4.loc[500:519]
                 ).items()
             }
             ).assign(Trial = i, Learner = 'CASJNK', Net="ds4"),
         sort=False
                 
     )
+    
+    
+    
+accuracy2( export_pom(cjn.net,by='label'),ds4.loc[500:599])
+
 plot_net(tn4, filename= resdir + '/TRUTH_ds4.png')
 plot_net(grd.net, filename= resdir + "/GREEDY_ds4.png")
 plot_net(cgm.net, filename= resdir + "/CASGMM_ds4.png")
@@ -182,6 +193,3 @@ plot_net(cjn.net, filename= resdir + "/CASJNK_ds4.png")
 t_res.to_csv(resdir + "/ds4_Training_Results.csv", index=False)
 g_res.to_csv(resdir + "/ds4_Graph_Results.csv", index=False)
 ds4_acc.to_csv(resdir + "/ds4_accuracy.csv", index=False)
-
-
-  

@@ -572,8 +572,14 @@ class net:
 
     def add_edge(self, p_idx, c_idx):
         # print("parent:", p_idx, "child:", c_idx)
+        
         if len(self.nds[c_idx].par) == self.maxpar:
-            return 
+            return
+        
+        pch = [i for i in self.nds.values() if self.nds[p_idx] in i.par]
+        #print(pch)
+        if len(pch) == self.maxpar:
+            return
         
         if p_idx != c_idx:
             self.nds[c_idx].add_parents([self.nds[p_idx]])

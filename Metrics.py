@@ -83,6 +83,8 @@ def edge_hits(lrn, Truth=None, directed=False):
     return score
 
 
+
+
 ### Calculate Kulbeck Liebler Divergence between two tables
 def kldv(p, q):
     idx=[i for i in list(p.columns) if i !='Prob']
@@ -151,17 +153,19 @@ def call_mult(o, p):
         return 'TP'
     else:
         return 'FN'
-    
+
 def pred_mult(m, data, var):
     d = data.copy()
     v = [i.name for i in m.states]
-    ix = [i for i in range(0, len(v)) if v[i] == var]
+    ix = [i for i in range(0, len(v)) if v[i] == var][0]
+
     #score = {'TP':0, 'FP':0, 'TN':0, 'FN':0}
-    
+   
     d['Pred'] = [
-         p[ix] for p in m.predict(np.array(data[v].assign(**{var:None})))
-     ]
-     
+          p[ix] for p in m.predict(np.array(data[v].assign(**{var:None})))
+      ]
+    
+
     score = d[[var,'Pred']].apply(
          lambda y: call_mult(y[var], y['Pred']), axis=1
      ).value_counts().to_dict()
@@ -179,7 +183,6 @@ def accuracy(net, data):
         #print(c)
         res[c] = ac(pred_mult(m, data, c))
     return res
-    
     
 def sensetivity(net, data):
     res = {}

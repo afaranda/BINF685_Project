@@ -1,7 +1,7 @@
 import pandas as pd
 from Learners import greedy, CASGMM, CASMOD, CASJNB
-from Metrics import kldv, accuracy, edge_hits
-from network import net, export_pom, plot_net
+from Metrics import accuracy, edge_hits
+from network import export_pom, plot_net
 from generate_networks import tn2, ds2
 
 
@@ -124,7 +124,7 @@ for i in range(1, 6):
             i[0]:[i[1]]  
             for i in accuracy(
                 cjn.net,
-                ds2.loc[500:599]
+                ds2.loc[500:519]
                 ).items()
             }
             ).assign(Trial = i, Learner = 'GREEDY', Net="ds2"),
@@ -138,7 +138,7 @@ for i in range(1, 6):
             i[0]:[i[1]]  
             for i in accuracy(
                 cgm.net,
-                ds2.loc[500:599]
+                ds2.loc[500:519]
                 ).items()
             }
             ).assign(Trial = i, Learner = 'CASGMM', Net="ds2"),
@@ -152,7 +152,7 @@ for i in range(1, 6):
             i[0]:[i[1]]  
             for i in accuracy(
                 cmd.net,
-                ds2.loc[500:599]
+                ds2.loc[500:519]
                 ).items()
             }
             ).assign(Trial = i, Learner = 'CASMOD', Net="ds2"),
@@ -166,7 +166,7 @@ for i in range(1, 6):
             i[0]:[i[1]]  
             for i in accuracy(
                 cjn.net,
-                ds2.loc[500:599]
+                ds2.loc[500:519]
                 ).items()
             }
             ).assign(Trial = i, Learner = 'CASJNK', Net="ds2"),
