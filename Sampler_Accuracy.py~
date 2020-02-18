@@ -2,13 +2,7 @@ import pandas as pd
 from Learners import greedy, CASGMM, CASMOD, CASJNB
 from Metrics import kldv, accuracy, edge_hits
 from network import net, export_pom, plot_net
-from generate_networks import tn1, ds1, tn2, ds2, tn3, ds3, tn4, ds4
-
-
-# Define the number of iterations learn on, and maximum number of sequential
-# misses
-niter = 10
-maxm = 5
+from generate_networks import tn3, ds3
 
 ######## Use ds3 to Demonstrate  Sampler accuracy
 
