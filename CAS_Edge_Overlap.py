@@ -5,23 +5,31 @@ Created on Tue Feb 18 20:12:14 2020
 
 @author: adam
 """
-import timeit as tm
-import pandas as pd
 resdir="results"
 #### Define Enironment (lots of code in a string)
-envir = """
+
 import pandas as pd
 import numpy as np
-import random as rn
-from copy import deepcopy as dc
 from sklearn.metrics import mutual_info_score as mis
 from sklearn.mixture import GaussianMixture as gm
 from jenkspy import jenks_breaks
-from network import net
-from network import export_pom
-from network import score_pom
 
 from generate_networks import ds1, ds2, ds4
+
+def threeway(E1, E2, E3, filename="inx.csv", count=True):
+    results = {
+        'E1-E2uE3': E1.difference(E2.union(E3)),
+        'E2-E1uE3': E2.difference(E1.union(E3)),
+        'E3-E1uE2': E3.difference(E1.union(E2)),
+        'E1iE2-E3': E1.intersection(E2).difference(E3),
+        'E1iE3-E2': E1.intersection(E3).difference(E2),
+        'E2iE3-E1': E2.intersection(E3).difference(E1),
+        'E1iE2iE3': E1.intersection(E2).intersection(E3)
+    }
+    if count:
+        return {i:len(results[i]) for i in results.keys()}
+    else:
+        return results
 
 def best_model(X):
     '''
@@ -151,33 +159,79 @@ def CASMOD(data, mi):
                 E.add((c,v))
             
     return E
+
 ds1_mi = pop_mi(ds1)
 ds2_mi = pop_mi(ds2)
 ds4_mi = pop_mi(ds4)
-"""
 
-#### define timers:
-ds1cgm = tm.Timer('CASGMM(ds1, ds1_mi)', setup=envir)
-ds1cmd = tm.Timer('CASMOD(ds1, ds1_mi)', setup=envir)
-ds1cjn = tm.Timer('CASJNB(ds1, ds1_mi)', setup=envir)
-ds2cgm = tm.Timer('CASGMM(ds2, ds2_mi)', setup=envir)
-ds2cmd = tm.Timer('CASMOD(ds2, ds2_mi)', setup=envir)
-ds2cjn = tm.Timer('CASJNB(ds2, ds2_mi)', setup=envir)
-ds4cgm = tm.Timer('CASGMM(ds4, ds4_mi)', setup=envir)
-ds4cmd = tm.Timer('CASMOD(ds4, ds4_mi)', setup=envir)
-ds4cjn = tm.Timer('CASJNB(ds4, ds4_mi)', setup=envir)
+ds1cgmEdge = CASGMM(ds1, ds1_mi)
+ds1cmdEdge = CASMOD(ds1, ds1_mi)
+ds1cjnEdge = CASJNB(ds1, ds1_mi)
 
-timing = pd.DataFrame({
-    'ds1cgm':ds1cgm.repeat(50, 1),
-    'ds1cmd':ds1cmd.repeat(50, 1),
-    'ds1cjn':ds1cjn.repeat(50, 1),
-    'ds2cgm':ds2cgm.repeat(50, 1),
-    'ds2cmd':ds2cmd.repeat(50, 1),
-    'ds2cjn':ds2cjn.repeat(50, 1),
-    'ds4cgm':ds2cgm.repeat(50, 1),
-    'ds4cmd':ds2cmd.repeat(50, 1),
-    'ds4cjn':ds2cjn.repeat(50, 1)
-})
-timing.to_csv(resdir + "Timing_Results.csv", index=False)
+ds2cgmEdge = CASGMM(ds2, ds2_mi)
+ds2cmdEdge = CASMOD(ds2, ds2_mi)
+ds2cjnEdge = CASJNB(ds2, ds2_mi)
+
+ds4cgmEdge = CASGMM(ds4, ds4_mi)
+ds4cmdEdge = CASMOD(ds4, ds4_mi)
+ds4cjnEdge = CASJNB(ds4, ds4_mi)
+
+# Tabulate intersecting edges between three sets
+def threeway(E1, E2, E3, filename="inx.csv", count=True):
+    results = {
+        'E1-E2uE3': E1.difference(E2.union(E3)),
+        'E2-E1uE3': E2.difference(E1.union(E3)),
+        'E3-E1uE2': E3.difference(E1.union(E2)),
+        'E1iE2-E3': E1.intersection(E2).difference(E3),
+        'E1iE3-E2': E1.intersection(E3).difference(E2),
+        'E2iE3-E1': E2.intersection(E3).difference(E1),
+        'E1iE2iE3': E1.intersection(E2).intersection(E3)
+    }
+    if count:
+        return {i:len(results[i]) for i in results.keys()}
+    else:
+        return results
+    
+#### Print Output To Screen -- save as text file
+print("Venn values for ds1")
+print(
+    threeway(
+        ds1cgmEdge,              #E1 CASGMM edge set
+        ds1cjnEdge,              #E2 CASJNB edge set
+        ds1cmdEdge,              #E3 CASMOD edge set
+        count=True
+    ), "\n"
+)
+        
+
+print("Venn values for ds2")
+print(
+    threeway(
+        ds2cgmEdge,              #E1 CASGMM edge set
+        ds2cjnEdge,              #E2 CASJNB edge set
+        ds2cmdEdge,              #E3 CASMOD edge set
+        count=True
+    ), "\n"
+)
+        
+print("Venn values for ds4")
+print(
+    threeway(
+        ds4cgmEdge,              #E1 CASGMM edge set
+        ds4cjnEdge,              #E2 CASJNB edge set
+        ds4cmdEdge,              #E3 CASMOD edge set
+        count=True
+    ), "\n"
+)
+        
+    
+    
+
+
+
+
+
+
+
 
 

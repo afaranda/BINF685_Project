@@ -21,7 +21,7 @@ from network import net
 from network import export_pom
 from network import score_pom
 
-from generate_networks import ds1, ds2, ds4
+from generate_networks import ds2, ds4
 
 def best_model(X):
     '''
@@ -151,15 +151,12 @@ def CASMOD(data, mi):
                 E.add((c,v))
             
     return E
-ds1_mi = pop_mi(ds1)
+
 ds2_mi = pop_mi(ds2)
 ds4_mi = pop_mi(ds4)
 """
 
 #### define timers:
-ds1cgm = tm.Timer('CASGMM(ds1, ds1_mi)', setup=envir)
-ds1cmd = tm.Timer('CASMOD(ds1, ds1_mi)', setup=envir)
-ds1cjn = tm.Timer('CASJNB(ds1, ds1_mi)', setup=envir)
 ds2cgm = tm.Timer('CASGMM(ds2, ds2_mi)', setup=envir)
 ds2cmd = tm.Timer('CASMOD(ds2, ds2_mi)', setup=envir)
 ds2cjn = tm.Timer('CASJNB(ds2, ds2_mi)', setup=envir)
@@ -168,9 +165,6 @@ ds4cmd = tm.Timer('CASMOD(ds4, ds4_mi)', setup=envir)
 ds4cjn = tm.Timer('CASJNB(ds4, ds4_mi)', setup=envir)
 
 timing = pd.DataFrame({
-    'ds1cgm':ds1cgm.repeat(50, 1),
-    'ds1cmd':ds1cmd.repeat(50, 1),
-    'ds1cjn':ds1cjn.repeat(50, 1),
     'ds2cgm':ds2cgm.repeat(50, 1),
     'ds2cmd':ds2cmd.repeat(50, 1),
     'ds2cjn':ds2cjn.repeat(50, 1),
