@@ -13,6 +13,7 @@ import numpy as np
 from sklearn.metrics import mutual_info_score as mis
 from sklearn.mixture import GaussianMixture as gm
 from jenkspy import jenks_breaks
+np.random.seed(21921)
 
 from generate_networks import ds1, ds2, ds4
 
@@ -136,10 +137,19 @@ def CASMOD(data, mi):
         
         # Skip Expectation Maximization if there are no "unused" nodes 
         # with an mi against 'v' > than the current candidates of 'v'
+        #print(v, C, Cv,"\n")
+        #print(max([mi[v][i] for i in set(mii) - Cv.keys()]))
+        #print((min(list(Cv.values())) if len(Cv) > 0 else 0))
+        if len(Cv) == 0:
+            threshold = 0
+        else:
+            threshold = min(list(Cv.values()))
         if not (
-                min(list(Cv.values()) + [0]) >
-                max([mi[v][i] for i in set(mii) - Cv.keys()])
+            threshold >
+            max([mi[v][i] for i in set(mii) - Cv.keys()])
         ):
+            
+            
             m = best_model(miv.values.reshape(-1,1))
         
             if m.n_components > 1:
@@ -153,10 +163,13 @@ def CASMOD(data, mi):
                     C = m.predict(miv.values.reshape(-1,1))
                     # print("Keep 1:",C)
                     C = [mii[i] for i in range(0,len(C)) if C[i] == 1]
-         
+               
             for c in C:
                 E.add((v,c))
                 E.add((c,v))
+            #print(v, C, "\n")
+        else:
+           print('skip')
             
     return E
 
@@ -164,33 +177,26 @@ ds1_mi = pop_mi(ds1)
 ds2_mi = pop_mi(ds2)
 ds4_mi = pop_mi(ds4)
 
+np.random.seed(21921)
 ds1cgmEdge = CASGMM(ds1, ds1_mi)
+np.random.seed(21921)
 ds1cmdEdge = CASMOD(ds1, ds1_mi)
+np.random.seed(21921)
 ds1cjnEdge = CASJNB(ds1, ds1_mi)
 
+np.random.seed(21921)
 ds2cgmEdge = CASGMM(ds2, ds2_mi)
+np.random.seed(21921)
 ds2cmdEdge = CASMOD(ds2, ds2_mi)
+np.random.seed(21921)
 ds2cjnEdge = CASJNB(ds2, ds2_mi)
 
+np.random.seed(21921)
 ds4cgmEdge = CASGMM(ds4, ds4_mi)
+np.random.seed(21921)
 ds4cmdEdge = CASMOD(ds4, ds4_mi)
+np.random.seed(21921)
 ds4cjnEdge = CASJNB(ds4, ds4_mi)
-
-# Tabulate intersecting edges between three sets
-def threeway(E1, E2, E3, filename="inx.csv", count=True):
-    results = {
-        'E1-E2uE3': E1.difference(E2.union(E3)),
-        'E2-E1uE3': E2.difference(E1.union(E3)),
-        'E3-E1uE2': E3.difference(E1.union(E2)),
-        'E1iE2-E3': E1.intersection(E2).difference(E3),
-        'E1iE3-E2': E1.intersection(E3).difference(E2),
-        'E2iE3-E1': E2.intersection(E3).difference(E1),
-        'E1iE2iE3': E1.intersection(E2).intersection(E3)
-    }
-    if count:
-        return {i:len(results[i]) for i in results.keys()}
-    else:
-        return results
     
 #### Print Output To Screen -- save as text file
 print("Venn values for ds1")

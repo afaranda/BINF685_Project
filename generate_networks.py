@@ -34,6 +34,7 @@ from network import net
 from network import export_pom
 from network import sample_net
 from numpy.random import choice
+np.random.seed(21921)
 
 
 # Dependency Function 1

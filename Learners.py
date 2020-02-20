@@ -354,8 +354,12 @@ class CASMOD():
             
             # Skip Expectation Maximization if there are no "unused" nodes 
             # with an mi against 'v' > than the current candidates of 'v'
+            if len(Cv) == 0:
+                threshold = 0
+            else:
+                threshold = min(list(Cv.values()))
             if not (
-                    min(list(Cv.values()) + [0]) >
+                    threshold >
                     max([self.mi[v][i] for i in set(mii) - Cv.keys()])
             ):
                 m = best_model(miv.values.reshape(-1,1))

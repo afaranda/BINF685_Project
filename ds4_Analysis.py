@@ -1,15 +1,16 @@
 import pandas as pd
+import numpy as np
 from Learners import greedy, CASGMM, CASMOD, CASJNB
 from Metrics import accuracy, edge_hits
-from network import net, export_pom, plot_net
+from network import export_pom, plot_net
 from generate_networks import tn4, ds4
-
+np.random.seed(21921)
 
 # Define the number of iterations learn on, and maximum number of sequential
 # misses
 niter=150
 maxm=25
-resdir='results3'
+resdir='results'
 
 
 ### Run Learners on Network #4: The 'Alarm' network.

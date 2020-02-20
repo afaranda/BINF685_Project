@@ -125,13 +125,19 @@ def CASMOD(data, mi):
             i[1]:mi[v][i[1]] 
             for i in E if i[0] == v
         }
-        
         # Skip Expectation Maximization if there are no "unused" nodes 
         # with an mi against 'v' > than the current candidates of 'v'
+        # print(max([mi[v][i] for i in set(mii) - Cv.keys()]))
+        # print((min(list(Cv.values())) if len(Cv) > 0 else 0))
+        if len(Cv) == 0:
+            threshold = 0
+        else:
+            threshold = min(list(Cv.values()))
         if not (
-                min(list(Cv.values()) + [0]) >
-                max([mi[v][i] for i in set(mii) - Cv.keys()])
+            threshold >
+            max([mi[v][i] for i in set(mii) - Cv.keys()])
         ):
+            
             m = best_model(miv.values.reshape(-1,1))
         
             if m.n_components > 1:
@@ -145,10 +151,12 @@ def CASMOD(data, mi):
                     C = m.predict(miv.values.reshape(-1,1))
                     # print("Keep 1:",C)
                     C = [mii[i] for i in range(0,len(C)) if C[i] == 1]
-         
+               
             for c in C:
                 E.add((v,c))
                 E.add((c,v))
+        else:
+           print('skip')
             
     return E
 ds1_mi = pop_mi(ds1)
