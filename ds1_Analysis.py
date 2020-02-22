@@ -8,9 +8,9 @@ np.random.seed(21921)
 
 # Define the number of iterations learn on, and maximum number of sequential
 # misses
-niter=150
-maxm=25
-resdir='results2'
+niter=10
+maxm=5
+resdir='results'
 
 ### Run Learners on Network #1: 20 independent nodes -- expect no networks
 print("Net: ds1")
